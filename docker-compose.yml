@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: gestion-ecole-db
+    environment:
+      POSTGRES_DB: gestion_ecole_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gestion-ecole-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gestion-ecole-backend
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: gestion_ecole_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres123
+      JWT_SECRET: mySecretKey123456789012345678901234567890
+    ports:
+      - "8080:8080"
+    networks:
+      - gestion-ecole-network
+    restart: unless-stopped
+
+  maildev:
+    image: maildev/maildev
+    container_name: gestion-ecole-maildev
+    ports:
+      - "1080:1080"  # Web interface
+      - "1025:1025"  # SMTP server
+    networks:
+      - gestion-ecole-network
+
+volumes:
+  postgres_data:
+
+networks:
+  gestion-ecole-network:
+    driver: bridge
