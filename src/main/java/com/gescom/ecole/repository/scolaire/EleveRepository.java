@@ -29,8 +29,13 @@ public interface EleveRepository extends JpaRepository<Eleve, Long>, JpaSpecific
     
     // Méthodes pour les statistiques
     Long countByStatut(String statut);
-    Long countByAnneeScolaireId(Long anneeScolaireId);
-    Long countByAnneeScolaireIdAndStatut(Long anneeScolaireId, String statut);
+    
+    @Query("SELECT COUNT(e) FROM Eleve e WHERE e.classe.anneeScolaire.id = :anneeScolaireId")
+    Long countByAnneeScolaireId(@Param("anneeScolaireId") Long anneeScolaireId);
+    
+    @Query("SELECT COUNT(e) FROM Eleve e WHERE e.classe.anneeScolaire.id = :anneeScolaireId AND e.statut = :statut")
+    Long countByAnneeScolaireIdAndStatut(@Param("anneeScolaireId") Long anneeScolaireId, @Param("statut") String statut);
+    
     Long countByClasseId(Long classeId);
     
     @Query("SELECT COUNT(e) FROM Eleve e WHERE e.classe.anneeScolaire.id = :anneeScolaireId AND e.genre = :genre")

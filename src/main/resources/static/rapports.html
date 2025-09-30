@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapports - EcoleGest</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .report-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .report-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .report-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .report-description {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .filter-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-input {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/dashboard.html'">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/eleves.html'">
+                <span class="menu-icon">👨‍🎓</span>
+                <span class="menu-text">Élèves</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/paiements.html'">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/classes.html'">
+                <span class="menu-icon">🏫</span>
+                <span class="menu-text">Classes</span>
+            </div>
+            <div class="menu-item active">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Rapports</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/parametres.html'">
+                <span class="menu-icon">⚙️</span>
+                <span class="menu-text">Paramètres</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Centre de Rapports</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;">Générez et exportez vos rapports</p>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3 style="margin-bottom: 20px;">Filtres généraux</h3>
+                <div class="filter-row">
+                    <select class="filter-input">
+                        <option>Année scolaire 2024-2025</option>
+                        <option>Année scolaire 2023-2024</option>
+                    </select>
+                    <select class="filter-input">
+                        <option>Toutes les périodes</option>
+                        <option>1er Trimestre</option>
+                        <option>2ème Trimestre</option>
+                        <option>3ème Trimestre</option>
+                    </select>
+                    <select class="filter-input">
+                        <option>Toutes les classes</option>
+                        <option>6ème</option>
+                        <option>5ème</option>
+                        <option>4ème</option>
+                    </select>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 20px;">Rapports Disponibles</h3>
+            
+            <div class="report-grid">
+                <div class="report-card" onclick="generateReport('eleves')">
+                    <div class="report-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        👨‍🎓
+                    </div>
+                    <div class="report-title">Liste des Élèves</div>
+                    <div class="report-description">
+                        Rapport complet des élèves inscrits avec leurs informations personnelles et statut
+                    </div>
+                </div>
+
+                <div class="report-card" onclick="generateReport('paiements')">
+                    <div class="report-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
+                        💰
+                    </div>
+                    <div class="report-title">Journal des Paiements</div>
+                    <div class="report-description">
+                        Historique détaillé de tous les paiements reçus avec modes et références
+                    </div>
+                </div>
+
+                <div class="report-card" onclick="generateReport('impayes')">
+                    <div class="report-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                        ⚠️
+                    </div>
+                    <div class="report-title">État des Impayés</div>
+                    <div class="report-description">
+                        Liste des élèves en situation d'impayé avec montants dus et échéances
+                    </div>
+                </div>
+
+                <div class="report-card" onclick="generateReport('classes')">
+                    <div class="report-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                        🏫
+                    </div>
+                    <div class="report-title">Effectifs par Classe</div>
+                    <div class="report-description">
+                        Répartition des élèves par classe avec statistiques d'occupation
+                    </div>
+                </div>
+
+                <div class="report-card" onclick="generateReport('financier')">
+                    <div class="report-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                        📊
+                    </div>
+                    <div class="report-title">Rapport Financier</div>
+                    <div class="report-description">
+                        Synthèse financière complète : recouvrements, impayés, taux de recouvrement
+                    </div>
+                </div>
+
+                <div class="report-card" onclick="generateReport('bourses')">
+                    <div class="report-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                        🎓
+                    </div>
+                    <div class="report-title">Bourses & Dérogations</div>
+                    <div class="report-description">
+                        Liste des bénéficiaires de bourses et dérogations avec montants
+                    </div>
+                </div>
+
+                <div class="report-card" onclick="generateReport('statistiques')">
+                    <div class="report-icon" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: white;">
+                        📈
+                    </div>
+                    <div class="report-title">Statistiques Globales</div>
+                    <div class="report-description">
+                        Tableau de bord statistique avec indicateurs clés de performance
+                    </div>
+                </div>
+
+                <div class="report-card" onclick="generateReport('custom')">
+                    <div class="report-icon" style="background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%); color: #333;">
+                        ⚙️
+                    </div>
+                    <div class="report-title">Rapport Personnalisé</div>
+                    <div class="report-description">
+                        Créez un rapport sur mesure avec vos propres critères de sélection
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', () => AuthService.logout());
+        
+        function generateReport(type) {
+            alert(`Génération du rapport : ${type}\n\nFormat : PDF / Excel\nFonctionnalité à développer`);
+        }
+    </script>
+</body>
+</html>

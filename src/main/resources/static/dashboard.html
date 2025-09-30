@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - EcoleGest</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            
+            <div class="menu-item active" data-page="dashboard">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            <div class="menu-item" data-page="eleves">
+                <span class="menu-icon">👨‍🎓</span>
+                <span class="menu-text">Élèves</span>
+            </div>
+            <div class="menu-item" data-page="paiements">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+            <div class="menu-item" data-page="classes">
+                <span class="menu-icon">🏫</span>
+                <span class="menu-text">Classes</span>
+            </div>
+            <div class="menu-item" data-page="rapports">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Rapports</span>
+            </div>
+            <div class="menu-item" data-page="derogations">
+                <span class="menu-icon">🎁</span>
+                <span class="menu-text">Dérogations</span>
+            </div>
+            <div class="menu-item" data-page="parametres">
+                <span class="menu-icon">⚙️</span>
+                <span class="menu-text">Paramètres</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <h1>Tableau de bord</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;" id="anneeScolaire">Chargement...</p>
+                </div>
+                <div class="header-actions">
+                    <div class="notification-icon">
+                        🔔
+                        <span class="notification-badge" id="notificationCount">0</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar" id="userAvatar">AD</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px;" id="userName">Admin</div>
+                            <div style="font-size: 12px; color: #7f8c8d;" id="userRole">Administrateur</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Total Élèves</div>
+                            <div class="stat-value" id="totalEleves">-</div>
+                            <div class="stat-change" id="changeEleves">Chargement...</div>
+                        </div>
+                        <div class="stat-icon blue">👨‍🎓</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Recouvrements du mois</div>
+                            <div class="stat-value" id="recouvrementsMois">-</div>
+                            <div class="stat-change" id="changeRecouvrements">Chargement...</div>
+                        </div>
+                        <div class="stat-icon green">💰</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Taux de recouvrement</div>
+                            <div class="stat-value" id="tauxRecouvrement">-</div>
+                            <div class="stat-change" id="changeTaux">Chargement...</div>
+                        </div>
+                        <div class="stat-icon orange">📈</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Impayés</div>
+                            <div class="stat-value" id="impayes">-</div>
+                            <div class="stat-change negative" id="changeImpayes">Chargement...</div>
+                        </div>
+                        <div class="stat-icon purple">⚠️</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Évolution des recouvrements</div>
+                        <select class="chart-filter" id="periodFilter">
+                            <option value="30">30 derniers jours</option>
+                            <option value="90">3 derniers mois</option>
+                            <option value="365">Cette année</option>
+                        </select>
+                    </div>
+                    <div class="chart-placeholder">
+                        📊 Graphique d'évolution des paiements
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Modes de paiement</div>
+                    </div>
+                    <div class="chart-placeholder">
+                        🥧 Répartition par mode
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-section">
+                <div class="section-header">
+                    <div class="section-title">Activités récentes</div>
+                    <div class="view-all" onclick="window.location.href='/paiements.html'">Voir tout →</div>
+                </div>
+
+                <div id="activitiesList">
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px;">Chargement des activités...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

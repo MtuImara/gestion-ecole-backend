@@ -2,14 +2,24 @@ spring:
   application:
     name: gestion-ecole-backend
   
-  profiles:
-    active: dev
+  main:
+    allow-bean-definition-overriding: true
+  
+  # profiles:
+  #   active: dev
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/gestion_ecole_db
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
+    # PostgreSQL distant (base à créer d'abord)
+    url: jdbc:postgresql://shortline.proxy.rlwy.net:33602/railway
+    username: postgres
+    password: qnvwvvSydkEszgeSiMEqWswVfaMcBnKD
     driver-class-name: org.postgresql.Driver
+    
+    # H2 en mémoire pour développement local
+    # url: jdbc:h2:mem:gestion_ecole_db
+    # username: sa
+    # password:
+    # driver-class-name: org.h2.Driver
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
@@ -23,7 +33,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+        format_sql: false
         show_sql: false
         jdbc:
           batch_size: 20
@@ -61,7 +71,7 @@ spring:
       - factures
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: 8080
   servlet:
     context-path: /api
   error:

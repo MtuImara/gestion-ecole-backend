@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annonces - EcoleGest</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .annonces-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .annonce-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .annonce-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+        }
+        
+        .annonce-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+        
+        .annonce-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-info { background: #e3f2fd; color: #1976d2; }
+        .badge-urgent { background: #ffebee; color: #d32f2f; }
+        .badge-event { background: #f3e5f5; color: #7b1fa2; }
+        
+        .annonce-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .annonce-content {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .annonce-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #7f8c8d;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .annonce-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/dashboard.html'">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/messages.html'">
+                <span class="menu-icon">📧</span>
+                <span class="menu-text">Messages</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/notifications.html'">
+                <span class="menu-icon">🔔</span>
+                <span class="menu-text">Notifications</span>
+            </div>
+            <div class="menu-item active">
+                <span class="menu-icon">📢</span>
+                <span class="menu-text">Annonces</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Annonces</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;">Communications officielles</p>
+                </div>
+                <button class="btn-add" onclick="alert('Nouvelle annonce')">📢 Nouvelle Annonce</button>
+            </div>
+
+            <div class="annonces-grid">
+                <div class="annonce-card">
+                    <div class="annonce-header">
+                        <div>
+                            <div class="annonce-badge badge-urgent">Urgent</div>
+                        </div>
+                    </div>
+                    <div class="annonce-title">Rappel : Échéance de paiement</div>
+                    <div class="annonce-content">
+                        Nous rappelons aux parents que l'échéance pour le paiement du 2ème trimestre est fixée au 31 décembre. 
+                        Veuillez régulariser votre situation avant cette date pour éviter tout désagrément.
+                    </div>
+                    <div class="annonce-meta">
+                        <div class="annonce-meta-item">
+                            <span>📅</span>
+                            <span>15 décembre 2024</span>
+                        </div>
+                        <div class="annonce-meta-item">
+                            <span>👤</span>
+                            <span>Direction</span>
+                        </div>
+                        <div class="annonce-meta-item">
+                            <span>👥</span>
+                            <span>Tous les parents</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="annonce-card">
+                    <div class="annonce-header">
+                        <div>
+                            <div class="annonce-badge badge-event">Événement</div>
+                        </div>
+                    </div>
+                    <div class="annonce-title">Journée Portes Ouvertes</div>
+                    <div class="annonce-content">
+                        L'école organise une journée portes ouvertes le samedi 20 janvier 2025 de 9h00 à 16h00. 
+                        Les parents et futurs élèves sont invités à découvrir nos installations et rencontrer l'équipe pédagogique.
+                    </div>
+                    <div class="annonce-meta">
+                        <div class="annonce-meta-item">
+                            <span>📅</span>
+                            <span>10 décembre 2024</span>
+                        </div>
+                        <div class="annonce-meta-item">
+                            <span>👤</span>
+                            <span>Administration</span>
+                        </div>
+                        <div class="annonce-meta-item">
+                            <span>👥</span>
+                            <span>Public</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="annonce-card">
+                    <div class="annonce-header">
+                        <div>
+                            <div class="annonce-badge badge-info">Information</div>
+                        </div>
+                    </div>
+                    <div class="annonce-title">Nouveaux horaires de la bibliothèque</div>
+                    <div class="annonce-content">
+                        À partir du 1er janvier, la bibliothèque sera ouverte tous les jours de 7h30 à 17h00, 
+                        y compris le samedi matin de 8h00 à 12h00.
+                    </div>
+                    <div class="annonce-meta">
+                        <div class="annonce-meta-item">
+                            <span>📅</span>
+                            <span>8 décembre 2024</span>
+                        </div>
+                        <div class="annonce-meta-item">
+                            <span>👤</span>
+                            <span>Bibliothécaire</span>
+                        </div>
+                        <div class="annonce-meta-item">
+                            <span>👥</span>
+                            <span>Tous les élèves</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="annonce-card">
+                    <div class="annonce-header">
+                        <div>
+                            <div class="annonce-badge badge-info">Information</div>
+                        </div>
+                    </div>
+                    <div class="annonce-title">Résultats du 1er trimestre</div>
+                    <div class="annonce-content">
+                        Les bulletins du premier trimestre sont disponibles. Les parents peuvent les consulter 
+                        via leur espace personnel ou venir les retirer au secrétariat.
+                    </div>
+                    <div class="annonce-meta">
+                        <div class="annonce-meta-item">
+                            <span>📅</span>
+                            <span>5 décembre 2024</span>
+                        </div>
+                        <div class="annonce-meta-item">
+                            <span>👤</span>
+                            <span>Direction Pédagogique</span>
+                        </div>
+                        <div class="annonce-meta-item">
+                            <span>👥</span>
+                            <span>Parents d'élèves</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', () => AuthService.logout());
+    </script>
+</body>
+</html>

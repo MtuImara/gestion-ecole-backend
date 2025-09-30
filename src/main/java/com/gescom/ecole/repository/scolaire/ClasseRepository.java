@@ -18,14 +18,12 @@ public interface ClasseRepository extends JpaRepository<Classe, Long>, JpaSpecif
     
     List<Classe> findByAnneeScolaireId(Long anneeScolaireId);
     
-    // Méthodes pour les statistiques
-    Long countByAnneeScolaireIdAnneeScolaire(Long anneeScolaireId);
-    
     List<Classe> findByEnseignantPrincipalId(Long enseignantId);
     
     @Query("SELECT c FROM Classe c WHERE c.active = true AND c.anneeScolaire.active = true")
     List<Classe> findActiveClasses();
     
+    @Query("SELECT c FROM Classe c WHERE c.effectifActuel < c.capaciteMax")
     List<Classe> findClassesWithAvailableSpace();
     
     @Query("SELECT COUNT(c) FROM Classe c WHERE c.anneeScolaire.id = :anneeScolaireId")

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Élèves - EcoleGest</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+            max-width: 600px;
+        }
+        
+        .search-input-table {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        
+        .btn-add {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #f8f9fa;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-active {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+        
+        .badge-inactive {
+            background: #ffebee;
+            color: #e74c3c;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .btn-view { background: #e3f2fd; }
+        .btn-edit { background: #fff3e0; }
+        .btn-delete { background: #ffebee; }
+        
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .page-btn:hover:not(.active) {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/dashboard.html'">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            <div class="menu-item active">
+                <span class="menu-icon">👨‍🎓</span>
+                <span class="menu-text">Élèves</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/paiements.html'">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/classes.html'">
+                <span class="menu-icon">🏫</span>
+                <span class="menu-text">Classes</span>
+            </div>
+            <div class="menu-item">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Rapports</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <h1>Gestion des Élèves</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;">Liste complète des élèves inscrits</p>
+                </div>
+            </div>
+
+            <!-- Stats rapides -->
+            <div class="stats-grid" style="margin-bottom: 20px;">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Total Élèves</div>
+                            <div class="stat-value" id="totalEleves">-</div>
+                        </div>
+                        <div class="stat-icon blue">👨‍🎓</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Élèves Actifs</div>
+                            <div class="stat-value" id="elevesActifs">-</div>
+                        </div>
+                        <div class="stat-icon green">✅</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Boursiers</div>
+                            <div class="stat-value" id="boursiers">-</div>
+                        </div>
+                        <div class="stat-icon orange">🎓</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="search-filter">
+                        <input 
+                            type="text" 
+                            class="search-input-table" 
+                            id="searchInput"
+                            placeholder="Rechercher par nom, prénom ou matricule..."
+                        >
+                    </div>
+                    <button class="btn-add" onclick="alert('Fonctionnalité à venir')">
+                        ➕ Nouvel Élève
+                    </button>
+                </div>
+
+                <div id="tableContent">
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px; color: #7f8c8d;">Chargement des élèves...</p>
+                    </div>
+                </div>
+
+                <div id="pagination" class="pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/eleves.js"></script>
+</body>
+</html>

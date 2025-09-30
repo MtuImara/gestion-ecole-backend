@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - EcoleGest</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .notifications-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .notification-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 15px;
+            transition: all 0.3s;
+        }
+        
+        .notification-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+        
+        .notification-item.unread {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-left: 4px solid #667eea;
+        }
+        
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .notification-icon.payment { background: #e8f5e9; }
+        .notification-icon.info { background: #e3f2fd; }
+        .notification-icon.warning { background: #fff3e0; }
+        .notification-icon.success { background: #e8f5e9; }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .notification-message {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .notification-time {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+        }
+        
+        .tab-item {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .tab-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/dashboard.html'">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/messages.html'">
+                <span class="menu-icon">📧</span>
+                <span class="menu-text">Messages</span>
+            </div>
+            <div class="menu-item active">
+                <span class="menu-icon">🔔</span>
+                <span class="menu-text">Notifications</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/annonces.html'">
+                <span class="menu-icon">📢</span>
+                <span class="menu-text">Annonces</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Centre de Notifications</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;">Toutes vos alertes et notifications</p>
+                </div>
+                <button class="btn-add" onclick="alert('Marquer tout comme lu')">✓ Tout marquer comme lu</button>
+            </div>
+
+            <div class="notifications-container">
+                <div class="filter-tabs">
+                    <div class="tab-item active">Toutes</div>
+                    <div class="tab-item">Non lues</div>
+                    <div class="tab-item">Paiements</div>
+                    <div class="tab-item">Système</div>
+                </div>
+
+                <div class="notification-item unread">
+                    <div class="notification-icon payment">💰</div>
+                    <div class="notification-content">
+                        <div class="notification-title">Nouveau paiement reçu</div>
+                        <div class="notification-message">
+                            Paiement de 30,000 BIF reçu pour Jean Dupont (6ème A)
+                        </div>
+                        <div class="notification-time">Il y a 5 minutes</div>
+                    </div>
+                </div>
+
+                <div class="notification-item unread">
+                    <div class="notification-icon info">ℹ️</div>
+                    <div class="notification-content">
+                        <div class="notification-title">Nouvelle inscription</div>
+                        <div class="notification-message">
+                            Marie Niyongabo vient de s'inscrire en 5ème B
+                        </div>
+                        <div class="notification-time">Il y a 15 minutes</div>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-icon warning">⚠️</div>
+                    <div class="notification-content">
+                        <div class="notification-title">Rappel impayés</div>
+                        <div class="notification-message">
+                            3 élèves en retard de paiement depuis plus de 15 jours
+                        </div>
+                        <div class="notification-time">Il y a 1 heure</div>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-icon success">✅</div>
+                    <div class="notification-content">
+                        <div class="notification-title">Rapport généré</div>
+                        <div class="notification-message">
+                            Le rapport financier mensuel est disponible au téléchargement
+                        </div>
+                        <div class="notification-time">Il y a 2 heures</div>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-icon info">📊</div>
+                    <div class="notification-content">
+                        <div class="notification-title">Statistiques mises à jour</div>
+                        <div class="notification-message">
+                            Les statistiques du tableau de bord ont été actualisées
+                        </div>
+                        <div class="notification-time">Il y a 3 heures</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', () => AuthService.logout());
+    </script>
+</body>
+</html>

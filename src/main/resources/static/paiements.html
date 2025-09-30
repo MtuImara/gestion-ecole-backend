@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enregistrer un Paiement - EcoleGest</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/paiements.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/dashboard.html'">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/eleves.html'">
+                <span class="menu-icon">👨‍🎓</span>
+                <span class="menu-text">Élèves</span>
+            </div>
+            <div class="menu-item active">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/classes.html'">
+                <span class="menu-icon">🏫</span>
+                <span class="menu-text">Classes</span>
+            </div>
+            <div class="menu-item">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Rapports</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <div class="breadcrumb">
+                        <a href="/dashboard.html">Dashboard</a> / Paiements
+                    </div>
+                    <h1>Enregistrer un Paiement</h1>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Formulaire de paiement -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">💳</div>
+                        <div class="card-title">Nouveau Paiement</div>
+                    </div>
+
+                    <!-- Recherche élève -->
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            class="search-input" 
+                            id="searchEleve"
+                            placeholder="Rechercher un élève par nom, prénom ou matricule..."
+                        >
+                        <span class="search-icon">🔍</span>
+                    </div>
+
+                    <div id="searchResults" class="search-results"></div>
+
+                    <!-- Info élève sélectionné -->
+                    <div id="studentInfo" style="display: none;">
+                        <div class="student-info">
+                            <div class="student-header">
+                                <div class="student-avatar">👨‍🎓</div>
+                                <div class="student-details">
+                                    <h3 id="studentName">-</h3>
+                                    <div class="student-meta">
+                                        <span id="studentClass">-</span> • 
+                                        <span id="studentMatricule">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="student-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">Total dû</div>
+                                    <div class="stat-value" id="studentTotalDu">-</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Total payé</div>
+                                    <div class="stat-value" id="studentTotalPaye">-</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Solde</div>
+                                    <div class="stat-value" id="studentSolde">-</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Dérogation</div>
+                                    <div class="stat-value" id="studentDerogation">Non</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formulaire de paiement -->
+                        <form id="paiementForm">
+                            <input type="hidden" id="eleveId">
+
+                            <div class="form-group">
+                                <label class="form-label">Montant (BIF)</label>
+                                <input 
+                                    type="number" 
+                                    class="form-input" 
+                                    id="montant"
+                                    placeholder="Entrez le montant"
+                                    required
+                                    min="0"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Mode de paiement</label>
+                                <div class="payment-methods">
+                                    <label class="payment-method active" data-mode="ESPECE">
+                                        <input type="radio" name="modePaiement" value="ESPECE" checked hidden>
+                                        <div class="payment-method-icon">💵</div>
+                                        <div class="payment-method-name">Espèces</div>
+                                    </label>
+                                    <label class="payment-method" data-mode="MOBILE_MONEY">
+                                        <input type="radio" name="modePaiement" value="MOBILE_MONEY" hidden>
+                                        <div class="payment-method-icon">📱</div>
+                                        <div class="payment-method-name">Mobile Money</div>
+                                    </label>
+                                    <label class="payment-method" data-mode="VIREMENT">
+                                        <input type="radio" name="modePaiement" value="VIREMENT" hidden>
+                                        <div class="payment-method-icon">🏦</div>
+                                        <div class="payment-method-name">Virement</div>
+                                    </label>
+                                    <label class="payment-method" data-mode="CHEQUE">
+                                        <input type="radio" name="modePaiement" value="CHEQUE" hidden>
+                                        <div class="payment-method-icon">📝</div>
+                                        <div class="payment-method-name">Chèque</div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Numéro de référence (optionnel)</label>
+                                <input 
+                                    type="text" 
+                                    class="form-input" 
+                                    id="reference"
+                                    placeholder="Numéro de transaction, chèque, etc."
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Notes (optionnel)</label>
+                                <textarea 
+                                    class="form-input" 
+                                    id="notes"
+                                    rows="3"
+                                    placeholder="Commentaires ou remarques..."
+                                ></textarea>
+                            </div>
+
+                            <div class="button-group">
+                                <button type="button" class="btn btn-secondary" id="cancelBtn">
+                                    Annuler
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
+                                    Enregistrer le paiement
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Récapitulatif -->
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">📋</div>
+                            <div class="card-title">Récapitulatif</div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <span class="alert-icon">ℹ️</span>
+                            <div>
+                                Sélectionnez un élève pour voir les détails et enregistrer un paiement.
+                            </div>
+                        </div>
+
+                        <div id="summaryContent" style="display: none;">
+                            <div class="summary-section">
+                                <div class="summary-title">Détails du paiement</div>
+                                <div class="summary-row">
+                                    <span class="summary-label">Montant</span>
+                                    <span class="summary-value" id="summaryMontant">-</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span class="summary-label">Mode</span>
+                                    <span class="summary-value" id="summaryMode">-</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span class="summary-label">Date</span>
+                                    <span class="summary-value" id="summaryDate">-</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span class="summary-label">Nouveau solde</span>
+                                    <span class="summary-value summary-total" id="summaryNewSolde">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Historique récent -->
+                    <div class="card" style="margin-top: 20px;">
+                        <div class="card-header">
+                            <div class="card-icon">📜</div>
+                            <div class="card-title">Historique récent</div>
+                        </div>
+                        <div id="paiementsRecents">
+                            <div style="text-align: center; padding: 20px; color: #7f8c8d;">
+                                Aucun paiement récent
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/paiements.js"></script>
+</body>
+</html>
