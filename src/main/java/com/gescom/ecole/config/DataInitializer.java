@@ -45,7 +45,7 @@ public class DataInitializer {
         
         return args -> {
             log.info("Initialisation des données de test...");
-
+            
             // Créer les permissions
             Permission p1 = createPermission(permissionRepository, "users.create", "Créer des utilisateurs", "USERS", "CREATE");
             Permission p2 = createPermission(permissionRepository, "users.read", "Lire les utilisateurs", "USERS", "READ");
@@ -256,8 +256,6 @@ public class DataInitializer {
                     .parents(Set.of(parent))
                     .build();
                 eleveRepository.save(eleve1);
-                classe.setEffectifActuel(classe.getEffectifActuel() + 1);
-                classeRepository.save(classe);
                 log.info("Élève créé : {} {}", eleve1.getNom(), eleve1.getPrenom());
 
                 Eleve eleve2 = Eleve.builder()
@@ -277,9 +275,12 @@ public class DataInitializer {
                     .classe(classe)
                     .build();
                 eleveRepository.save(eleve2);
-                classe.setEffectifActuel(classe.getEffectifActuel() + 1);
-                classeRepository.save(classe);
                 log.info("Élève créé : {} {}", eleve2.getNom(), eleve2.getPrenom());
+                
+                // Mettre à jour l'effectif de la classe une seule fois à la fin
+                classe.setEffectifActuel(2);
+                classeRepository.save(classe);
+                log.info("Effectif de la classe {} mis à jour : {}", classe.getCode(), classe.getEffectifActuel());
             }
 
             log.info("Initialisation des données terminée avec succès!");

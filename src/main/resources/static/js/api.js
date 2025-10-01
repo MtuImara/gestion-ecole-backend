@@ -1,5 +1,5 @@
 // Configuration de l'API
-const API_BASE_URL = '/api';
+const API_BASE_URL = '';  // Pas de context-path
 const TOKEN_KEY = 'ecolegest_token';
 const USER_KEY = 'ecolegest_user';
 
@@ -46,7 +46,7 @@ const AuthService = {
             }
             
             const data = await response.json();
-            this.setToken(data.token);
+            this.setToken(data.accessToken);  // Correction: accessToken au lieu de token
             this.setUser(data.user);
             return data;
         } catch (error) {
