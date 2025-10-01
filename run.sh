@@ -17,7 +17,6 @@ echo "[3] Démarrage de l'application..."
 echo
 echo "Application disponible sur : http://localhost:8080/api"
 echo "Documentation Swagger : http://localhost:8080/api/swagger-ui.html"
-echo "Console H2 (dev) : http://localhost:8080/api/h2-console"
 echo
 echo "Comptes de test :"
 echo "- Admin : admin / admin123"
@@ -28,4 +27,4 @@ echo
 echo "========================================"
 echo
 
-java -jar target/gestion-ecole-backend-1.0.0.jar --spring.profiles.active=dev
+java -jar target/gestion-ecole-backend-1.0.0.jar

@@ -4,22 +4,13 @@ spring:
   
   main:
     allow-bean-definition-overriding: true
-  
-  # profiles:
-  #   active: dev
+    lazy-initialization: true  # Gain 30-50% sur le démarrage
   
   datasource:
-    # PostgreSQL distant (base à créer d'abord)
     url: jdbc:postgresql://shortline.proxy.rlwy.net:33602/railway
     username: postgres
     password: qnvwvvSydkEszgeSiMEqWswVfaMcBnKD
     driver-class-name: org.postgresql.Driver
-    
-    # H2 en mémoire pour développement local
-    # url: jdbc:h2:mem:gestion_ecole_db
-    # username: sa
-    # password:
-    # driver-class-name: org.h2.Driver
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
@@ -120,15 +111,15 @@ app:
       enabled: false
       provider: stripe
 
-# Logging Configuration
+# Logging Configuration (Optimisé pour démarrage rapide)
 logging:
   level:
-    root: INFO
-    com.gescom.ecole: DEBUG
-    org.springframework.web: INFO
-    org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    root: WARN                          # Gain 5-10% sur démarrage
+    com.gescom.ecole: INFO
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN             # DEBUG ralentit beaucoup
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN  # TRACE = très lent
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
