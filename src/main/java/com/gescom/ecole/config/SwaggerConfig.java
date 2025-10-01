@@ -39,7 +39,7 @@ public class SwaggerConfig {
                     .url("http://springdoc.org")))
             .servers(List.of(
                 new Server()
-                    .url("http://localhost:" + serverPort + "/api")
+                    .url("http://localhost:" + serverPort)
                     .description("Serveur de développement"),
                 new Server()
                     .url("https://api.gestion-ecole.com")

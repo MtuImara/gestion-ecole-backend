@@ -111,7 +111,7 @@ Password: enseignant123
 
 ### 1. Login
 ```bash
-curl -X POST http://localhost:8080/api/auth/login \
+curl -X POST http://localhost:8080/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin123"}'
 ```
@@ -131,13 +131,13 @@ curl -X POST http://localhost:8080/api/auth/login \
 ### 2. Récupérer les Élèves
 ```bash
 # Remplacer <TOKEN> par le token reçu
-curl http://localhost:8080/api/eleves \
+curl http://localhost:8080/eleves \
   -H "Authorization: Bearer <TOKEN>"
 ```
 
 ### 3. Récupérer les Classes
 ```bash
-curl http://localhost:8080/api/classes \
+curl http://localhost:8080/classes \
   -H "Authorization: Bearer <TOKEN>"
 ```
 

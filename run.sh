@@ -15,8 +15,9 @@ mvn package -DskipTests
 echo
 echo "[3] Démarrage de l'application..."
 echo
-echo "Application disponible sur : http://localhost:8080/api"
-echo "Documentation Swagger : http://localhost:8080/api/swagger-ui.html"
+echo "Application disponible sur : http://localhost:8080"
+echo "Documentation Swagger : http://localhost:8080/swagger-ui.html"
+echo "Page de connexion : http://localhost:8080/login.html"
 echo
 echo "Comptes de test :"
 echo "- Admin : admin / admin123"
