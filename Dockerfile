@@ -1,13 +1,37 @@
-FROM openjdk:17-jdk-slim
+# ========================================
+# Stage 1: Build
+# ========================================
+FROM maven:3.9-eclipse-temurin-17 AS build
+
+WORKDIR /build
+
+# Copier les fichiers de configuration Maven
+COPY pom.xml .
+COPY .mvn .mvn
+COPY mvnw .
+
+# Télécharger les dépendances (mis en cache si pom.xml ne change pas)
+RUN mvn dependency:go-offline -B
+
+# Copier le code source
+COPY src ./src
+
+# Compiler et packager l'application (sans tests pour rapidité)
+RUN mvn clean package -DskipTests -B
+
+# ========================================
+# Stage 2: Runtime
+# ========================================
+FROM eclipse-temurin:17-jre-alpine
 
 # Créer un utilisateur non-root
-RUN groupadd -r spring && useradd -r -g spring spring
+RUN addgroup -S spring && adduser -S spring -G spring
 
 # Définir le répertoire de travail
 WORKDIR /app
 
-# Copier le fichier JAR
-COPY target/gestion-ecole-backend-1.0.0.jar app.jar
+# Copier le JAR depuis le stage de build
+COPY --from=build /build/target/gestion-ecole-backend-1.0.0.jar app.jar
 
 # Créer le répertoire pour les uploads
 RUN mkdir -p /app/uploads && chown -R spring:spring /app
