@@ -31,8 +31,8 @@ public class PaiementController {
     private final PaiementService paiementService;
 
     @PostMapping
-    @Operation(summary = "Créer un paiement", description = "Enregistre un nouveau paiement")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE', 'PARENT')")
+    @Operation(summary = "Créer un paiement", description = "Enregistre un nouveau paiement (EN_ATTENTE, nécessite validation)")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE', 'PARENT', 'ELEVE')")
     public ResponseEntity<PaiementDTO> create(@Valid @RequestBody PaiementDTO paiementDTO) {
         PaiementDTO created = paiementService.create(paiementDTO);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
@@ -151,5 +151,38 @@ public class PaiementController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFin) {
         BigDecimal total = paiementService.getTotalPaiementsByPeriode(dateDebut, dateFin);
         return ResponseEntity.ok(Map.of("totalPaiements", total));
+    }
+    
+    @GetMapping("/recus/mes-recus")
+    @Operation(summary = "Mes reçus", description = "Récupère les reçus de l'élève connecté")
+    @PreAuthorize("hasAuthority('ELEVE')")
+    public ResponseEntity<List<PaiementDTO>> getMesRecus(
+            @RequestHeader("Authorization") String authHeader) {
+        // TODO: Extraire l'ID de l'élève depuis le token JWT
+        // Long eleveId = getUserIdFromToken(authHeader);
+        // List<PaiementDTO> recus = paiementService.findByEleveId(eleveId);
+        return ResponseEntity.ok(List.of());
+    }
+    
+    @GetMapping("/recus/enfant/{eleveId}")
+    @Operation(summary = "Reçus de mon enfant", description = "Récupère les reçus d'un enfant (parent uniquement)")
+    @PreAuthorize("hasAuthority('PARENT')")
+    public ResponseEntity<List<PaiementDTO>> getRecusEnfant(
+            @PathVariable Long eleveId,
+            @RequestHeader("Authorization") String authHeader) {
+        // TODO: Vérifier que le parent connecté est bien le parent de cet élève
+        // Long parentId = getUserIdFromToken(authHeader);
+        // Vérifier relation parent-enfant
+        // List<PaiementDTO> recus = paiementService.findByEleveId(eleveId);
+        return ResponseEntity.ok(List.of());
+    }
+    
+    @GetMapping("/en-attente")
+    @Operation(summary = "Paiements en attente", description = "Récupère tous les paiements en attente de validation")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE', 'SECRETAIRE')")
+    public ResponseEntity<Page<PaiementDTO>> getPaiementsEnAttente(@PageableDefault Pageable pageable) {
+        // TODO: Implémenter méthode dans service
+        // Page<PaiementDTO> paiements = paiementService.findByStatut(StatutPaiement.EN_ATTENTE, pageable);
+        return ResponseEntity.ok(Page.empty());
     }
 }

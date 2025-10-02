@@ -60,4 +60,16 @@ public interface EleveRepository extends JpaRepository<Eleve, Long>, JpaSpecific
     
     @Query("SELECT e FROM Eleve e WHERE e.classe.niveau.id = :niveauId")
     List<Eleve> findByNiveauId(@Param("niveauId") Long niveauId);
+    
+    @Query("SELECT COUNT(e) FROM Eleve e WHERE e.boursier = true")
+    long countByBoursierTrue();
+    
+    @Query("SELECT e FROM Eleve e WHERE " +
+           "(:classeId IS NULL OR e.classe.id = :classeId) AND " +
+           "(:anneeScolaireId IS NULL OR e.classe.anneeScolaire.id = :anneeScolaireId) AND " +
+           "(:statut IS NULL OR e.statut = :statut)")
+    Page<Eleve> filterEleves(@Param("classeId") Long classeId, 
+                              @Param("anneeScolaireId") Long anneeScolaireId,
+                              @Param("statut") StatutEleve statut,
+                              Pageable pageable);
 }

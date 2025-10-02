@@ -2,16 +2,54 @@ let currentPage = 0;
 let pageSize = 10;
 let searchTimeout = null;
 
+// Filtres
+let currentFilters = {
+    classeId: null,
+    anneeScolaireId: null,
+    statut: null,
+    search: ''
+};
+
 // Initialisation
 document.addEventListener('DOMContentLoaded', () => {
     loadEleves();
     loadStatistiques();
+    loadFilterOptions();
     setupEventListeners();
 });
 
 function setupEventListeners() {
-    // Recherche avec debounce
-    document.getElementById('searchInput').addEventListener('input', (e) => {
+    // Recherche globale avec debounce
+    const globalSearchInput = document.getElementById('globalSearchInput');
+    if (globalSearchInput) {
+        globalSearchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            currentFilters.search = e.target.value.trim();
+            
+            searchTimeout = setTimeout(() => {
+                applyFilters();
+            }, 300);
+        });
+    }
+    
+    // Filtres
+    document.getElementById('filterClasse')?.addEventListener('change', (e) => {
+        currentFilters.classeId = e.target.value || null;
+        applyFilters();
+    });
+    
+    document.getElementById('filterAnneeScolaire')?.addEventListener('change', (e) => {
+        currentFilters.anneeScolaireId = e.target.value || null;
+        applyFilters();
+    });
+    
+    document.getElementById('filterStatut')?.addEventListener('change', (e) => {
+        currentFilters.statut = e.target.value || null;
+        applyFilters();
+    });
+    
+    // Recherche ancienne (on garde pour compatibilité)
+    document.getElementById('searchInput')?.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
         const query = e.target.value.trim();
         
@@ -24,7 +62,7 @@ function setupEventListeners() {
         }, 300);
     });
     
-    document.getElementById('logoutBtn').addEventListener('click', () => {
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
         AuthService.logout();
     });
 }
@@ -92,7 +130,6 @@ function displayEleves(eleves) {
             </thead>
             <tbody>
                 ${eleves.map(eleve => `
-                    <tr>
                         <td><strong>${eleve.matricule || 'N/A'}</strong></td>
                         <td>${eleve.prenom} ${eleve.nom}</td>
                         <td>${eleve.classeInfo?.nom || 'Non assigné'}</td>
@@ -172,13 +209,11 @@ async function loadStatistiques() {
 
 // Actions sur les élèves
 function viewEleve(id) {
-    // Rediriger vers page de détail (à créer)
-    alert(`Affichage des détails de l'élève #${id}\n\nFonctionnalité à développer`);
+    window.location.href = `/eleve-details.html?id=${id}`;
 }
 
 function editEleve(id) {
-    // Rediriger vers formulaire d'édition (à créer)
-    alert(`Modification de l'élève #${id}\n\nFonctionnalité à développer`);
+    openEditModal(id);
 }
 
 async function deleteEleve(id) {
@@ -195,4 +230,95 @@ async function deleteEleve(id) {
         console.error('Erreur suppression:', error);
         Utils.showNotification('Erreur lors de la suppression', 'error');
     }
+}
+
+// Charger les options des filtres
+async function loadFilterOptions() {
+    try {
+        // Charger les classes
+        const classes = await ClasseAPI.getAll();
+        const selectClasse = document.getElementById('filterClasse');
+        if (selectClasse && classes) {
+            selectClasse.innerHTML = '<option value="">Toutes les classes</option>';
+            classes.forEach(classe => {
+                selectClasse.innerHTML += `<option value="${classe.id}">${classe.nom}</option>`;
+            });
+        }
+        
+        // Charger les années scolaires
+        const annees = await AnneeScolaireAPI.getAll();
+        const selectAnnee = document.getElementById('filterAnneeScolaire');
+        if (selectAnnee && annees) {
+            selectAnnee.innerHTML = '<option value="">Toutes les années</option>';
+            annees.forEach(annee => {
+                selectAnnee.innerHTML += `<option value="${annee.id}">${annee.libelle || annee.designation}</option>`;
+            });
+        }
+    } catch (error) {
+        console.error('Erreur chargement options filtres:', error);
+    }
+}
+
+// Appliquer les filtres
+async function applyFilters(page = 0) {
+    try {
+        currentPage = page;
+        
+        // Si recherche simple uniquement
+        if (currentFilters.search && !currentFilters.classeId && !currentFilters.anneeScolaireId && !currentFilters.statut) {
+            const data = await EleveAPI.search(currentFilters.search);
+            displayEleves(data.content || data || []);
+            if (data.totalPages !== undefined) {
+                displayPagination(data);
+            }
+            return;
+        }
+        
+        // Si filtres avancés
+        if (currentFilters.classeId || currentFilters.anneeScolaireId || currentFilters.statut) {
+            const data = await EleveAPI.filter(
+                currentFilters.classeId,
+                currentFilters.anneeScolaireId,
+                currentFilters.statut,
+                page,
+                pageSize
+            );
+            displayEleves(data.content || []);
+            displayPagination(data);
+            return;
+        }
+        
+        // Sinon, charger tous les élèves
+        loadEleves(page);
+        
+    } catch (error) {
+        console.error('Erreur application filtres:', error);
+        Utils.showNotification('Erreur lors du filtrage', 'error');
+    }
+}
+
+// Réinitialiser les filtres
+function resetFilters() {
+    currentFilters = {
+        classeId: null,
+        anneeScolaireId: null,
+        statut: null,
+        search: ''
+    };
+    
+    // Réinitialiser les champs
+    const globalSearch = document.getElementById('globalSearchInput');
+    if (globalSearch) globalSearch.value = '';
+    
+    const filterClasse = document.getElementById('filterClasse');
+    if (filterClasse) filterClasse.value = '';
+    
+    const filterAnnee = document.getElementById('filterAnneeScolaire');
+    if (filterAnnee) filterAnnee.value = '';
+    
+    const filterStatut = document.getElementById('filterStatut');
+    if (filterStatut) filterStatut.value = '';
+    
+    // Recharger tous les élèves
+    loadEleves(0);
 }

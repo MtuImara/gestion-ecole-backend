@@ -56,30 +56,36 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-label">Dérogations Actives</div>
+                            <div class="stat-label">En Attente</div>
                             <div class="stat-value" id="totalDerogations">-</div>
                         </div>
-                        <div class="stat-icon blue">🎁</div>
+                        <div class="stat-icon orange">⏳</div>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-label">Boursiers</div>
+                            <div class="stat-label">Approuvées</div>
                             <div class="stat-value" id="totalBoursiers">-</div>
                         </div>
-                        <div class="stat-icon green">🎓</div>
+                        <div class="stat-icon green">✅</div>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-label">Montant Total Réductions</div>
+                            <div class="stat-label">Montant Total</div>
                             <div class="stat-value" id="montantReductions">-</div>
                         </div>
-                        <div class="stat-icon orange">💰</div>
+                        <div class="stat-icon blue">💰</div>
                     </div>
                 </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <button class="filter-btn active" data-statut="EN_ATTENTE" style="padding: 10px 20px; border: 2px solid #f39c12; background: white; color: #f39c12; border-radius: 8px; cursor: pointer; font-weight: 600;">⏳ En Attente</button>
+                <button class="filter-btn" data-statut="APPROUVEE" style="padding: 10px 20px; border: 2px solid #27ae60; background: white; color: #27ae60; border-radius: 8px; cursor: pointer; font-weight: 600;">✅ Approuvées</button>
+                <button class="filter-btn" data-statut="REJETEE" style="padding: 10px 20px; border: 2px solid #e74c3c; background: white; color: #e74c3c; border-radius: 8px; cursor: pointer; font-weight: 600;">❌ Rejetées</button>
             </div>
 
             <div class="table-container">
@@ -96,19 +102,12 @@
                         <p>Chargement...</p>
                     </div>
                 </div>
+                <div id="pagination" class="pagination"></div>
             </div>
         </div>
     </div>
 
     <script src="js/api.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('logoutBtn').addEventListener('click', () => AuthService.logout());
-            document.getElementById('tableContent').innerHTML = '<div class="empty-state">Fonctionnalité en cours de développement</div>';
-            document.getElementById('totalDerogations').textContent = '0';
-            document.getElementById('totalBoursiers').textContent = '0';
-            document.getElementById('montantReductions').textContent = '0 BIF';
-        });
-    </script>
+    <script src="js/derogations.js"></script>
 </body>
 </html>

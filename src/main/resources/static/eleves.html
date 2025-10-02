@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Élèves - EcoleGest</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/eleves-custom.css">
     <style>
         .table-container {
             background: white;
@@ -224,6 +225,49 @@
                 </div>
             </div>
 
+            <!-- Filtres Avancés -->
+            <div class="filter-section">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">RECHERCHE</label>
+                        <input 
+                            type="text" 
+                            class="filter-input search-input-table" 
+                            id="globalSearchInput"
+                            placeholder="Nom, prénom, matricule..."
+                        >
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">CLASSE</label>
+                        <select class="filter-select" id="filterClasse">
+                            <option value="">Toutes les classes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">ANNÉE SCOLAIRE</label>
+                        <select class="filter-select" id="filterAnneeScolaire">
+                            <option value="">Toutes les années</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">STATUT</label>
+                        <select class="filter-select" id="filterStatut">
+                            <option value="">Tous</option>
+                            <option value="ACTIF">Actif</option>
+                            <option value="SUSPENDU">Suspendu</option>
+                            <option value="ABANDONNE">Abandonné</option>
+                            <option value="DIPLOME">Diplômé</option>
+                            <option value="TRANSFERE">Transféré</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" style="display: flex; align-items: flex-end;">
+                        <button onclick="resetFilters()" class="btn-add" style="background: #f0f0f0; color: #2c3e50; padding: 10px 20px;">
+                            🔄 Réinitialiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Table -->
             <div class="table-container">
                 <div class="table-header">
@@ -235,7 +279,7 @@
                             placeholder="Rechercher par nom, prénom ou matricule..."
                         >
                     </div>
-                    <button class="btn-add" onclick="alert('Fonctionnalité à venir')">
+                    <button class="btn-add" onclick="openCreateModal()">
                         ➕ Nouvel Élève
                     </button>
                 </div>
@@ -252,7 +296,91 @@
         </div>
     </div>
 
+    <!-- Modal Formulaire Élève -->
+    <div id="eleveModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 id="modalTitle" style="margin: 0; color: #2c3e50;">Nouvel Élève</h2>
+                <button onclick="closeModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d;">×</button>
+            </div>
+            
+            <form id="eleveForm" onsubmit="submitForm(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Matricule *</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="matricule" required style="flex: 1; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <button type="button" onclick="generateMatricule()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">Générer</button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Nom *</label>
+                        <input type="text" id="nom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Prénom *</label>
+                        <input type="text" id="prenom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Date de Naissance *</label>
+                        <input type="date" id="dateNaissance" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Genre *</label>
+                        <select id="genre" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="">Sélectionner</option>
+                            <option value="MASCULIN">Masculin</option>
+                            <option value="FEMININ">Féminin</option>
+                        </select>
+                    </div>
+                    
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Lieu de Naissance</label>
+                        <input type="text" id="lieuNaissance" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Adresse</label>
+                        <input type="text" id="adresse" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Téléphone</label>
+                        <input type="tel" id="telephone" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Email</label>
+                        <input type="email" id="email" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Classe</label>
+                        <select id="classeId" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="">Sélectionner une classe</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; padding-top: 25px;">
+                        <input type="checkbox" id="boursier" style="width: 20px; height: 20px; margin-right: 10px;">
+                        <label for="boursier" style="font-weight: 600; color: #2c3e50; cursor: pointer;">Boursier</label>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
+                    <button type="button" onclick="closeModal()" style="padding: 12px 24px; background: #f0f0f0; color: #2c3e50; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Annuler</button>
+                    <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="js/api.js"></script>
     <script src="js/eleves.js"></script>
+    <script src="js/eleve-form.js"></script>
 </body>
 </html>

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/communication")
+@RequestMapping("/communication")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Communication", description = "API de gestion de la communication")

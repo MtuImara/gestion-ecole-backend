@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails Élève - EcoleGest</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/table-common.css">
+    <style>
+        .detail-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .detail-row {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #7f8c8d;
+        }
+        .detail-value {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .action-buttons-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar no-print">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/dashboard.html'">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            <div class="menu-item active" onclick="window.location.href='/eleves.html'">
+                <span class="menu-icon">👨‍🎓</span>
+                <span class="menu-text">Élèves</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/classes.html'">
+                <span class="menu-icon">🏫</span>
+                <span class="menu-text">Classes</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/paiements.html'">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header no-print">
+                <div>
+                    <h1>Détails de l'Élève</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;">Informations complètes</p>
+                </div>
+                <button onclick="window.location.href='/eleves.html'" style="padding: 10px 20px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    ← Retour à la liste
+                </button>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-header">
+                    <div>
+                        <h2 id="eleveNom" style="margin: 0; color: #2c3e50;">Chargement...</h2>
+                        <p id="eleveMatricule" style="color: #7f8c8d; margin: 5px 0 0 0;"></p>
+                    </div>
+                    <span id="eleveStatut" class="badge badge-active">ACTIF</span>
+                </div>
+
+                <h3 style="color: #2c3e50; margin-bottom: 20px;">Informations Personnelles</h3>
+                <div id="infosPersonnelles"></div>
+
+                <h3 style="color: #2c3e50; margin: 30px 0 20px 0;">Informations Scolaires</h3>
+                <div id="infosScolaires"></div>
+
+                <div class="action-buttons-group no-print">
+                    <button onclick="effectuerPaiement()" style="padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+                        💰 Effectuer un Paiement
+                    </button>
+                    <button onclick="window.print()" style="padding: 15px 30px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+                        🖨️ Imprimer la Fiche
+                    </button>
+                    <button onclick="editEleve()" style="padding: 15px 30px; background: #f39c12; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+                        ✏️ Modifier
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/eleve-details.js"></script>
+</body>
+</html>

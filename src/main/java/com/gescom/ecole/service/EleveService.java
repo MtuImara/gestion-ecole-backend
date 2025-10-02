@@ -1,6 +1,7 @@
 package com.gescom.ecole.service;
 
 import com.gescom.ecole.dto.scolaire.EleveDTO;
+import com.gescom.ecole.dto.scolaire.EleveStatistiquesDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,4 +20,6 @@ public interface EleveService {
     String generateMatricule();
     EleveDTO inscrireEleve(Long eleveId, Long classeId);
     EleveDTO transfererEleve(Long eleveId, Long nouvelleClasseId);
+    EleveStatistiquesDTO getStatistiques();
+    Page<EleveDTO> filter(Long classeId, Long anneeScolaireId, String statut, Pageable pageable);
 }

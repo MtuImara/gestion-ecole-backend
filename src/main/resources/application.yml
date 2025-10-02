@@ -33,20 +33,27 @@ spring:
     open-in-view: false
   
   mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
-          auth: true
           starttls:
             enable: true
-            required: true
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
+          ssl:
+            trust: smtp.domain.com
+        auth: true
+    host: smtp.domain.com
+    username: test@asystresources.com
+    password: Asyst@2024
+    port: 587
+  
+  # Désactiver le cache pour le développement
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          no-cache: true
+          no-store: true
+          must-revalidate: true
   
   servlet:
     multipart:

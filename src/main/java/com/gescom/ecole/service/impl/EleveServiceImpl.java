@@ -218,4 +218,41 @@ public class EleveServiceImpl implements EleveService {
         log.info("Élève transféré avec succès");
         return eleveMapper.toDTO(eleve);
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public com.gescom.ecole.dto.scolaire.EleveStatistiquesDTO getStatistiques() {
+        log.info("Récupération des statistiques des élèves");
+        
+        long total = eleveRepository.count();
+        long actifs = eleveRepository.countByStatut(StatutEleve.ACTIF);
+        long boursiers = eleveRepository.countByBoursierTrue();
+        // Les inactifs = total - actifs (inclut suspendus, abandonnés, diplômés, transférés)
+        long inactifs = total - actifs;
+        
+        return com.gescom.ecole.dto.scolaire.EleveStatistiquesDTO.builder()
+            .total(total)
+            .actifs(actifs)
+            .boursiers(boursiers)
+            .inactifs(inactifs)
+            .build();
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Page<EleveDTO> filter(Long classeId, Long anneeScolaireId, String statut, Pageable pageable) {
+        log.info("Filtrage des élèves - classeId: {}, anneeScolaireId: {}, statut: {}", classeId, anneeScolaireId, statut);
+        
+        StatutEleve statutEnum = null;
+        if (statut != null && !statut.isEmpty()) {
+            try {
+                statutEnum = StatutEleve.valueOf(statut);
+            } catch (IllegalArgumentException e) {
+                log.warn("Statut invalide: {}", statut);
+            }
+        }
+        
+        Page<Eleve> elevesPage = eleveRepository.filterEleves(classeId, anneeScolaireId, statutEnum, pageable);
+        return elevesPage.map(eleveMapper::toDTO);
+    }
 }

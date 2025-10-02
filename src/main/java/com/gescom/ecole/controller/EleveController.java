@@ -1,6 +1,7 @@
 package com.gescom.ecole.controller;
 
 import com.gescom.ecole.dto.scolaire.EleveDTO;
+import com.gescom.ecole.dto.scolaire.EleveStatistiquesDTO;
 import com.gescom.ecole.service.EleveService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -125,5 +126,25 @@ public class EleveController {
     public ResponseEntity<Map<String, String>> generateMatricule() {
         String matricule = eleveService.generateMatricule();
         return ResponseEntity.ok(Map.of("matricule", matricule));
+    }
+    
+    @GetMapping("/statistiques")
+    @Operation(summary = "Statistiques des élèves", description = "Récupère les statistiques globales des élèves")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETAIRE', 'ENSEIGNANT')")
+    public ResponseEntity<EleveStatistiquesDTO> getStatistiques() {
+        EleveStatistiquesDTO stats = eleveService.getStatistiques();
+        return ResponseEntity.ok(stats);
+    }
+    
+    @GetMapping("/filter")
+    @Operation(summary = "Filtrer les élèves", description = "Filtre les élèves par classe, année scolaire et statut")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETAIRE', 'ENSEIGNANT')")
+    public ResponseEntity<Page<EleveDTO>> filter(
+            @RequestParam(required = false) Long classeId,
+            @RequestParam(required = false) Long anneeScolaireId,
+            @RequestParam(required = false) String statut,
+            @PageableDefault(size = 20) Pageable pageable) {
+        Page<EleveDTO> eleves = eleveService.filter(classeId, anneeScolaireId, statut, pageable);
+        return ResponseEntity.ok(eleves);
     }
 }

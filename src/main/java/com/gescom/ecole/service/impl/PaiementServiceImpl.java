@@ -13,6 +13,8 @@ import com.gescom.ecole.repository.finance.FactureRepository;
 import com.gescom.ecole.repository.finance.PaiementRepository;
 import com.gescom.ecole.repository.utilisateur.UtilisateurRepository;
 import com.gescom.ecole.service.PaiementService;
+import com.gescom.ecole.service.NotificationService;
+import com.gescom.ecole.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -39,6 +41,8 @@ public class PaiementServiceImpl implements PaiementService {
     private final FactureRepository factureRepository;
     private final UtilisateurRepository utilisateurRepository;
     private final PaiementMapper paiementMapper;
+    private final NotificationService notificationService;
+    private final EmailService emailService;
 
     @Override
     public PaiementDTO create(PaiementDTO paiementDTO) {
@@ -85,7 +89,7 @@ public class PaiementServiceImpl implements PaiementService {
         // Mettre à jour la facture
         updateFactureAfterPaiement(facture, paiement.getMontant());
         
-        log.info("Paiement créé avec succès - Numéro: {}", paiement.getNumeroPaiement());
+        log.info("Paiement créé avec succès en attente de validation - Numéro: {}", paiement.getNumeroPaiement());
         return paiementMapper.toDTO(paiement);
     }
 
@@ -227,6 +231,15 @@ public class PaiementServiceImpl implements PaiementService {
         paiement.setDateValidation(LocalDateTime.now());
         paiement = paiementRepository.save(paiement);
         
+        // Envoyer notifications et email APRÈS validation
+        try {
+            envoyerNotificationsEtEmail(paiement);
+            log.info("Notifications et email envoyés après validation du paiement ID: {}", id);
+        } catch (Exception e) {
+            log.error("Erreur lors de l'envoi des notifications/email après validation", e);
+            // Ne pas bloquer la validation si l'envoi échoue
+        }
+        
         log.info("Paiement validé avec succès - Numéro: {}", paiement.getNumeroPaiement());
         return paiementMapper.toDTO(paiement);
     }
@@ -293,6 +306,59 @@ public class PaiementServiceImpl implements PaiementService {
             facture.setStatut(StatutFacture.PARTIELLEMENT_PAYEE);
         } else {
             facture.setStatut(StatutFacture.EMISE);
+        }
+    }
+    
+    private void envoyerNotificationsEtEmail(Paiement paiement) {
+        if (paiement == null || paiement.getFacture() == null) {
+            return;
+        }
+        
+        Facture facture = paiement.getFacture();
+        
+        // Récupérer l'élève depuis la facture
+        if (facture.getEleve() == null) {
+            return;
+        }
+        
+        String montantFormate = String.format("%,.0f BIF", paiement.getMontant());
+        
+        // Utiliser la méthode dédiée du NotificationService
+        try {
+            notificationService.notifierPaiementRecu(
+                facture.getEleve().getId(),
+                paiement.getId(),
+                montantFormate
+            );
+            log.info("Notification envoyée à l'élève ID: {} pour paiement ID: {}", 
+                facture.getEleve().getId(), paiement.getId());
+        } catch (Exception e) {
+            log.error("Erreur lors de la création de notification pour l'élève", e);
+        }
+        
+        // Notifier aussi le parent s'il existe
+        if (paiement.getParent() != null) {
+            try {
+                notificationService.notifierPaiementRecu(
+                    paiement.getParent().getId(),
+                    paiement.getId(),
+                    montantFormate
+                );
+                log.info("Notification envoyée au parent ID: {} pour paiement ID: {}", 
+                    paiement.getParent().getId(), paiement.getId());
+                
+                // Envoyer email au parent si email disponible
+                if (paiement.getParent().getEmail() != null && !paiement.getParent().getEmail().isEmpty()) {
+                    try {
+                        emailService.envoyerRecuParEmail(paiement.getParent().getEmail(), paiement.getId());
+                        log.info("Reçu envoyé par email au parent: {}", paiement.getParent().getEmail());
+                    } catch (Exception emailEx) {
+                        log.error("Erreur envoi email reçu au parent", emailEx);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Erreur lors de la création de notification pour le parent", e);
+            }
         }
     }
 }

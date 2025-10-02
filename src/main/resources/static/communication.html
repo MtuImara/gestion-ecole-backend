@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication - EcoleGest</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/table-common.css">
+    <style>
+        .comm-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .comm-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .comm-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        .comm-tab:hover {
+            color: #667eea;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .message-list, .annonce-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message-item, .annonce-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .message-item:hover, .annonce-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .message-item.unread {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+        }
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .message-from {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .message-date {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .message-subject {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        .message-preview {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .annonce-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .annonce-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .annonce-badge.urgent {
+            background: #fee;
+            color: #e74c3c;
+        }
+        .annonce-badge.info {
+            background: #e3f2fd;
+            color: #2196f3;
+        }
+        .compose-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        .compose-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/dashboard.html'">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/eleves.html'">
+                <span class="menu-icon">👨‍🎓</span>
+                <span class="menu-text">Élèves</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/classes.html'">
+                <span class="menu-icon">🏫</span>
+                <span class="menu-text">Classes</span>
+            </div>
+            <div class="menu-item active">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Communication</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/paiements.html'">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/rapports.html'">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Rapports</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/parametres.html'">
+                <span class="menu-icon">⚙️</span>
+                <span class="menu-text">Paramètres</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Communication</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;">Messages, notifications et annonces</p>
+                </div>
+                <button onclick="refreshCurrent()" style="padding: 10px 20px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    🔄 Actualiser
+                </button>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom: 20px;">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Messages Non Lus</div>
+                            <div class="stat-value" id="messagesNonLus">-</div>
+                        </div>
+                        <div class="stat-icon blue">✉️</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Notifications</div>
+                            <div class="stat-value" id="notificationsNonLues">-</div>
+                        </div>
+                        <div class="stat-icon orange">🔔</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Annonces Actives</div>
+                            <div class="stat-value" id="annoncesActives">-</div>
+                        </div>
+                        <div class="stat-icon green">📢</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comm-tabs">
+                <button class="comm-tab active" onclick="switchTab('messages')">Messages</button>
+                <button class="comm-tab" onclick="switchTab('notifications')">
+                    Notifications
+                    <span id="notifBadge" style="display: none; background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; margin-left: 5px;"></span>
+                </button>
+                <button class="comm-tab" onclick="switchTab('annonces')">Annonces</button>
+                <button class="btn-add" onclick="openCreateAnnonceModal()" style="margin-left: auto;">➕ Nouvelle Annonce</button>
+            </div>
+
+            <div id="messages-tab" class="tab-content active">
+                <div id="messagesList" class="message-list">
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner"></div>
+                        <p style="color: #7f8c8d;">Chargement des messages...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="notifications-tab" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; color: #2c3e50;">Notifications</h3>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="notificationTypeFilter" onchange="filterNotificationsByType()" style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="">Tous les types</option>
+                            <option value="PAIEMENT">Paiement</option>
+                            <option value="INSCRIPTION">Inscription</option>
+                            <option value="SYSTEME">Système</option>
+                            <option value="ALERTE">Alerte</option>
+                        </select>
+                        <button onclick="marquerToutesNotificationsLues()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            ✓ Marquer toutes comme lues
+                        </button>
+                    </div>
+                </div>
+                <div id="notificationsList" class="message-list">
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner"></div>
+                        <p style="color: #7f8c8d;">Chargement des notifications...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="annonces-tab" class="tab-content">
+                <div id="annoncesList" class="annonce-list">
+                    <div style="text-align: center; padding: 40px;">
+                        <div class="spinner"></div>
+                        <p style="color: #7f8c8d;">Chargement des annonces...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="compose-btn" onclick="openComposeModal()" title="Nouveau message">✍️</button>
+
+    <script src="js/api.js"></script>
+    <script src="js/communication.js"></script>
+</body>
+</html>
+    <!-- Modal Composition Message -->
+    <div id="composeModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 style="margin: 0; color: #2c3e50;">Nouveau Message</h2>
+                <button onclick="closeComposeModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d;">×</button>
+            </div>
+            <form id="composeForm" onsubmit="submitMessage(event)">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Destinataire *</label>
+                        <select id="destinataire" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="">Sélectionner un destinataire</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Sujet *</label>
+                        <input type="text" id="sujet" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Message *</label>
+                        <textarea id="contenu" required rows="6" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; resize: vertical;"></textarea>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Pièces jointes</label>
+                        <input type="file" id="fichiers" multiple style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
+                    <button type="button" onclick="closeComposeModal()" style="padding: 12px 24px; background: #f0f0f0; color: #2c3e50; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Annuler</button>
+                    <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Envoyer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Détails Message -->
+    <div id="messageDetailModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div>
+                    <h2 style="margin: 0; color: #2c3e50;" id="messageSubject">Sujet</h2>
+                    <p style="color: #7f8c8d; margin: 5px 0 0 0;">De: <span id="messageFrom"></span> - <span id="messageDate"></span></p>
+                </div>
+                <button onclick="closeMessageDetail()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d;">×</button>
+            </div>
+            <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px;">
+                <p id="messageContent" style="white-space: pre-wrap; color: #2c3e50; line-height: 1.6;"></p>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="archiverCurrentMessage()" style="padding: 10px 20px; background: #f0f0f0; color: #2c3e50; border: none; border-radius: 8px; cursor: pointer;">📁 Archiver</button>
+                <button onclick="supprimerCurrentMessage()" style="padding: 10px 20px; background: #fee; color: #e74c3c; border: none; border-radius: 8px; cursor: pointer;">🗑️ Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Détails Notification -->
+    <div id="notificationDetailModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 600px; width: 90%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div>
+                    <h2 style="margin: 0; color: #2c3e50;" id="notifType">Notification</h2>
+                    <p style="color: #7f8c8d; margin: 5px 0 0 0;" id="notifDate"></p>
+                </div>
+                <button onclick="closeNotificationDetail()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d;">×</button>
+            </div>
+            <div style="padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                <p id="notifContent" style="color: #2c3e50; line-height: 1.6;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Détails Annonce -->
+    <div id="annonceDetailModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div>
+                    <h2 style="margin: 0; color: #2c3e50;" id="annonceTitle">Titre</h2>
+                    <p style="color: #7f8c8d; margin: 5px 0 0 0;"><span id="annonceType"></span> - <span id="annonceDate"></span></p>
+                </div>
+                <button onclick="closeAnnonceDetail()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d;">×</button>
+            </div>
+            <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px;">
+                <p id="annonceContent" style="white-space: pre-wrap; color: #2c3e50; line-height: 1.6;"></p>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="epinglerCurrentAnnonce()" style="padding: 10px 20px; background: #fff3cd; color: #856404; border: none; border-radius: 8px; cursor: pointer;">📌 Épingler</button>
+                <button onclick="supprimerCurrentAnnonce()" style="padding: 10px 20px; background: #fee; color: #e74c3c; border: none; border-radius: 8px; cursor: pointer;">🗑️ Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Création Annonce -->
+    <div id="createAnnonceModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 style="margin: 0; color: #2c3e50;">Nouvelle Annonce</h2>
+                <button onclick="closeCreateAnnonceModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d;">×</button>
+            </div>
+            <form id="annonceForm" onsubmit="submitAnnonce(event)">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Titre *</label>
+                        <input type="text" id="annoncetitre" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Type *</label>
+                        <select id="annonceTypeSelect" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="GENERALE">Générale</option>
+                            <option value="URGENTE">Urgente</option>
+                            <option value="EVENEMENT">Événement</option>
+                            <option value="ADMINISTRATIVE">Administrative</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Contenu *</label>
+                        <textarea id="annonceContenu" required rows="6" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; resize: vertical;"></textarea>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Pièces jointes</label>
+                        <input type="file" id="annonceFichiers" multiple style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <input type="checkbox" id="annonceEpinglee" style="width: 20px; height: 20px; margin-right: 10px;">
+                        <label for="annonceEpinglee" style="font-weight: 600; color: #2c3e50; cursor: pointer;">Épingler cette annonce</label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
+                    <button type="button" onclick="closeCreateAnnonceModal()" style="padding: 12px 24px; background: #f0f0f0; color: #2c3e50; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Annuler</button>
+                    <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Publier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/communication.js"></script>
+    <script src="js/communication-modals.js"></script>
+</body>
+</html>

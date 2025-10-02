@@ -139,6 +139,18 @@ const EleveAPI = {
     
     async getStatistiques() {
         return apiCall('/eleves/statistiques');
+    },
+    
+    async generateMatricule() {
+        return apiCall('/eleves/generate-matricule');
+    },
+    
+    async filter(classeId, anneeScolaireId, statut, page = 0, size = 10) {
+        let url = `/eleves/filter?page=${page}&size=${size}`;
+        if (classeId) url += `&classeId=${classeId}`;
+        if (anneeScolaireId) url += `&anneeScolaireId=${anneeScolaireId}`;
+        if (statut) url += `&statut=${statut}`;
+        return apiCall(url);
     }
 };
 
@@ -169,13 +181,172 @@ const PaiementAPI = {
     
     async getRecents(limit = 10) {
         return apiCall(`/paiements/recents?limit=${limit}`);
+    },
+    
+    async telechargerRecu(paiementId) {
+        const response = await fetch(`${API_BASE_URL}/paiements/${paiementId}/recu`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${AuthService.getToken()}`
+            }
+        });
+        if (!response.ok) throw new Error('Erreur téléchargement');
+        return await response.blob();
+    },
+    
+    async validerPaiement(paiementId) {
+        return apiCall(`/paiements/${paiementId}/valider`, {
+            method: 'POST'
+        });
+    },
+    
+    async annulerPaiement(paiementId) {
+        return apiCall(`/paiements/${paiementId}/annuler`, {
+            method: 'POST'
+        });
+    },
+    
+    async getPaiementsEnAttente(page = 0, size = 20) {
+        return apiCall(`/paiements/en-attente?page=${page}&size=${size}`);
+    }
+};
+
+// API des Dérogations
+const DerogationAPI = {
+    async getAll(page = 0, size = 10) {
+        return apiCall(`/derogations?page=${page}&size=${size}`);
+    },
+    
+    async getById(id) {
+        return apiCall(`/derogations/${id}`);
+    },
+    
+    async create(derogation) {
+        return apiCall('/derogations', {
+            method: 'POST',
+            body: JSON.stringify(derogation)
+        });
+    },
+    
+    async update(id, derogation) {
+        return apiCall(`/derogations/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(derogation)
+        });
+    },
+    
+    async delete(id) {
+        return apiCall(`/derogations/${id}`, {
+            method: 'DELETE'
+        });
+    },
+    
+    async getByEleve(eleveId) {
+        return apiCall(`/derogations/eleve/${eleveId}`);
+    },
+    
+    async getByParent(parentId) {
+        return apiCall(`/derogations/parent/${parentId}`);
+    },
+    
+    async getByStatut(statut, page = 0, size = 20) {
+        return apiCall(`/derogations/statut/${statut}?page=${page}&size=${size}`);
+    },
+    
+    async approuver(id, decidePar) {
+        return apiCall(`/derogations/${id}/approuver?decidePar=${encodeURIComponent(decidePar)}`, {
+            method: 'POST'
+        });
+    },
+    
+    async rejeter(id, decidePar, motifRejet) {
+        return apiCall(`/derogations/${id}/rejeter?decidePar=${encodeURIComponent(decidePar)}&motifRejet=${encodeURIComponent(motifRejet)}`, {
+            method: 'POST'
+        });
+    },
+    
+    async generateNumero() {
+        return apiCall('/derogations/generate-numero');
+    },
+    
+    async countParStatut() {
+        return apiCall('/derogations/count-par-statut');
+    }
+};
+
+// API de Gestion des Utilisateurs
+const UserManagementAPI = {
+    async getAll(page = 0, size = 10) {
+        return apiCall(`/users?page=${page}&size=${size}`);
+    },
+    
+    async getById(id) {
+        return apiCall(`/users/${id}`);
+    },
+    
+    async create(user) {
+        return apiCall('/users', {
+            method: 'POST',
+            body: JSON.stringify(user)
+        });
+    },
+    
+    async update(id, user) {
+        return apiCall(`/users/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(user)
+        });
+    },
+    
+    async delete(id) {
+        return apiCall(`/users/${id}`, {
+            method: 'DELETE'
+        });
+    },
+    
+    async activate(id) {
+        return apiCall(`/users/${id}/activate`, {
+            method: 'PUT'
+        });
+    },
+    
+    async deactivate(id) {
+        return apiCall(`/users/${id}/deactivate`, {
+            method: 'PUT'
+        });
+    },
+    
+    async changePassword(id, newPassword) {
+        return apiCall(`/users/${id}/change-password`, {
+            method: 'PUT',
+            body: JSON.stringify({ newPassword })
+        });
+    },
+    
+    async changeRole(id, role) {
+        return apiCall(`/users/${id}/change-role`, {
+            method: 'PUT',
+            body: JSON.stringify({ role })
+        });
+    },
+    
+    async search(query, page = 0, size = 10) {
+        return apiCall(`/users/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`);
+    },
+    
+    async getByRole(role, page = 0, size = 10) {
+        return apiCall(`/users/by-role/${role}?page=${page}&size=${size}`);
+    },
+    
+    async getStatistics() {
+        return apiCall('/users/statistics');
     }
 };
 
 // API des Classes
 const ClasseAPI = {
-    async getAll() {
-        return apiCall('/classes');
+    async getAll(page = 0, size = 10) {
+        return apiCall(`/classes?page=${page}&size=${size}`);
     },
     
     async getById(id) {
@@ -202,8 +373,146 @@ const ClasseAPI = {
         });
     },
     
+    async search(query) {
+        return apiCall(`/classes/search?query=${encodeURIComponent(query)}`);
+    },
+    
     async getEleves(id) {
         return apiCall(`/classes/${id}/eleves`);
+    }
+};
+
+// API des Niveaux
+const NiveauAPI = {
+    async getAll() {
+        return apiCall('/niveaux');
+    },
+    
+    async getById(id) {
+        return apiCall(`/niveaux/${id}`);
+    }
+};
+
+// API de Communication
+const CommunicationAPI = {
+    // Messages
+    async getMessagesRecus(page = 0, size = 20) {
+        return apiCall(`/communication/messages/recus?page=${page}&size=${size}`);
+    },
+    
+    async getMessagesEnvoyes(page = 0, size = 20) {
+        return apiCall(`/communication/messages/envoyes?page=${page}&size=${size}`);
+    },
+    
+    async getMessagesNonLus(page = 0, size = 20) {
+        return apiCall(`/communication/messages/non-lus?page=${page}&size=${size}`);
+    },
+    
+    async getMessage(id) {
+        return apiCall(`/communication/messages/${id}`);
+    },
+    
+    async envoyerMessage(messageData, files = null) {
+        const formData = new FormData();
+        formData.append('message', new Blob([JSON.stringify(messageData)], { type: 'application/json' }));
+        if (files) {
+            files.forEach(file => formData.append('files', file));
+        }
+        return apiCall('/communication/messages', {
+            method: 'POST',
+            body: formData,
+            headers: {} // Let browser set Content-Type for FormData
+        });
+    },
+    
+    async marquerMessageCommeLu(id) {
+        return apiCall(`/communication/messages/${id}/lire`, { method: 'PUT' });
+    },
+    
+    async archiverMessage(id) {
+        return apiCall(`/communication/messages/${id}/archiver`, { method: 'PUT' });
+    },
+    
+    async supprimerMessage(id) {
+        return apiCall(`/communication/messages/${id}`, { method: 'DELETE' });
+    },
+    
+    async countMessagesNonLus() {
+        return apiCall('/communication/messages/count-non-lus');
+    },
+    
+    // Notifications
+    async getNotifications(page = 0, size = 20) {
+        return apiCall(`/communication/notifications?page=${page}&size=${size}`);
+    },
+    
+    async getNotificationsNonLues(page = 0, size = 20) {
+        return apiCall(`/communication/notifications/non-lues?page=${page}&size=${size}`);
+    },
+    
+    async getNotification(id) {
+        return apiCall(`/communication/notifications/${id}`);
+    },
+    
+    async marquerNotificationCommeLue(id) {
+        return apiCall(`/communication/notifications/${id}/lire`, { method: 'PUT' });
+    },
+    
+    async marquerToutesNotificationsLues() {
+        return apiCall('/communication/notifications/lire-toutes', { method: 'PUT' });
+    },
+    
+    async countNotificationsNonLues() {
+        return apiCall('/communication/notifications/count-non-lues');
+    },
+    
+    // Annonces
+    async getAnnoncesActives(page = 0, size = 20) {
+        return apiCall(`/communication/annonces?page=${page}&size=${size}`);
+    },
+    
+    async getAnnoncesEpinglees(page = 0, size = 20) {
+        return apiCall(`/communication/annonces/epinglees?page=${page}&size=${size}`);
+    },
+    
+    async getAnnonce(id) {
+        return apiCall(`/communication/annonces/${id}`);
+    },
+    
+    async creerAnnonce(annonceData, files = null) {
+        const formData = new FormData();
+        formData.append('annonce', new Blob([JSON.stringify(annonceData)], { type: 'application/json' }));
+        if (files) {
+            files.forEach(file => formData.append('files', file));
+        }
+        return apiCall('/communication/annonces', {
+            method: 'POST',
+            body: formData,
+            headers: {}
+        });
+    },
+    
+    async modifierAnnonce(id, annonceData) {
+        return apiCall(`/communication/annonces/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(annonceData)
+        });
+    },
+    
+    async epinglerAnnonce(id) {
+        return apiCall(`/communication/annonces/${id}/epingler`, { method: 'PUT' });
+    },
+    
+    async supprimerAnnonce(id) {
+        return apiCall(`/communication/annonces/${id}`, { method: 'DELETE' });
+    },
+    
+    async countAnnoncesActives() {
+        return apiCall('/communication/annonces/count');
+    },
+    
+    async searchAnnonces(recherche, page = 0, size = 20) {
+        return apiCall(`/communication/annonces/search?recherche=${encodeURIComponent(recherche)}&page=${page}&size=${size}`);
     }
 };
 
@@ -326,24 +635,6 @@ const BourseAPI = {
     
     async getByEleve(eleveId) {
         return apiCall(`/bourses/eleve/${eleveId}`);
-    }
-};
-
-// API des Dérogations
-const DerogationAPI = {
-    async getAll(page = 0, size = 10) {
-        return apiCall(`/derogations?page=${page}&size=${size}`);
-    },
-    
-    async getById(id) {
-        return apiCall(`/derogations/${id}`);
-    },
-    
-    async create(derogation) {
-        return apiCall('/derogations', {
-            method: 'POST',
-            body: JSON.stringify(derogation)
-        });
     }
 };
 

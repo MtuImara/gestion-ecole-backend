@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Utilisateurs - EcoleGest</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/table-common.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar"></div>
+
+        <div class="main-content">
+            <div class="header">
+                <div><h1>Gestion des Utilisateurs</h1><p style="color: #7f8c8d; margin-top: 5px;">Administration des comptes</p></div>
+                <button class="btn-add" onclick="openCreateModal()">➕ Nouvel Utilisateur</button>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom: 20px;">
+                <div class="stat-card"><div class="stat-header"><div><div class="stat-label">Total</div><div class="stat-value" id="totalUsers">-</div></div><div class="stat-icon blue">👥</div></div></div>
+                <div class="stat-card"><div class="stat-header"><div><div class="stat-label">Actifs</div><div class="stat-value" id="activeUsers">-</div></div><div class="stat-icon green">✅</div></div></div>
+                <div class="stat-card"><div class="stat-header"><div><div class="stat-label">Inactifs</div><div class="stat-value" id="inactiveUsers">-</div></div><div class="stat-icon red">❌</div></div></div>
+            </div>
+
+            <div class="filter-section" style="background: white; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                <input type="text" id="searchInput" class="filter-input" placeholder="Rechercher par nom, email..." style="width: 100%;">
+            </div>
+
+            <div class="table-container">
+                <div id="tableContent"><div style="text-align: center; padding: 40px;"><div class="spinner"></div><p style="color: #7f8c8d;">Chargement...</p></div></div>
+                <div id="pagination" class="pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Utilisateur -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Nouvel Utilisateur</h2>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div style="display: grid; gap: 15px;">
+                    <div><label>Username *</label><input type="text" id="username" required></div>
+                    <div><label>Email *</label><input type="email" id="email" required></div>
+                    <div id="passwordField"><label>Mot de passe *</label><input type="password" id="password" required></div>
+                    <div><label>Téléphone</label><input type="text" id="telephone"></div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn-add" style="flex: 1;">Enregistrer</button>
+                    <button type="button" onclick="closeModal()" class="btn-add" style="flex: 1; background: #95a5a6;">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/role-manager.js"></script>
+    <script src="js/utilisateurs.js"></script>
+</body>
+</html>
