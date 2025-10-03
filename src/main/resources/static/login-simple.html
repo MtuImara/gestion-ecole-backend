@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Simple - EcoleGest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 400px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .logo {
+            text-align: center;
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .credentials {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        
+        .credentials h3 {
+            margin-bottom: 10px;
+            color: #495057;
+        }
+        
+        .credentials p {
+            margin: 5px 0;
+        }
+        
+        .credentials code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #e83e8c;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="logo">🎓</div>
+        <h1>EcoleGest</h1>
+        
+        <div class="credentials">
+            <h3>📝 Identifiants de test</h3>
+            <p>Admin: <code>admin</code> / <code>admin123</code></p>
+            <p>Comptable: <code>comptable</code> / <code>comptable123</code></p>
+            <p>Parent: <code>parent1</code> / <code>parent123</code></p>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" id="username" name="username" value="admin" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" value="admin123" required>
+            </div>
+            
+            <button type="submit" id="loginBtn">Se connecter</button>
+        </form>
+    </div>
+
+    <script>
+        // Fonction simple de login sans dépendances externes
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Désactiver le bouton
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Connexion en cours...';
+            
+            try {
+                console.log('Tentative de connexion pour:', username);
+                
+                // Appel API direct
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                console.log('Status de la réponse:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Données reçues:', data);
+                    
+                    // Sauvegarder le token et l'utilisateur
+                    if (data.accessToken) {
+                        localStorage.setItem('ecolegest_token', data.accessToken);
+                        console.log('Token sauvegardé');
+                    }
+                    
+                    if (data.user) {
+                        localStorage.setItem('ecolegest_user', JSON.stringify(data.user));
+                        console.log('User sauvegardé:', data.user);
+                    }
+                    
+                    // Afficher le succès
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✅ Connexion réussie! Redirection...';
+                    
+                    // Rediriger après 1 seconde
+                    setTimeout(() => {
+                        // Déterminer le dashboard selon le rôle
+                        let dashboardUrl = '/dashboard.html';
+                        
+                        if (data.user && data.user.roles && data.user.roles.length > 0) {
+                            const role = data.user.roles[0];
+                            console.log('Rôle détecté:', role);
+                            
+                            switch(role) {
+                                case 'ADMIN':
+                                case 'DIRECTEUR':
+                                    dashboardUrl = '/dashboard-fixed.html';
+                                    break;
+                                case 'COMPTABLE':
+                                    dashboardUrl = '/dashboard-comptable.html';
+                                    break;
+                                case 'ENSEIGNANT':
+                                    dashboardUrl = '/dashboard-enseignant.html';
+                                    break;
+                                case 'PARENT':
+                                    dashboardUrl = '/dashboard-parent.html';
+                                    break;
+                                default:
+                                    dashboardUrl = '/dashboard.html';
+                            }
+                        }
+                        
+                        console.log('Redirection vers:', dashboardUrl);
+                        window.location.href = dashboardUrl;
+                    }, 1000);
+                    
+                } else {
+                    // Erreur de connexion
+                    const errorText = await response.text();
+                    console.error('Erreur de connexion:', errorText);
+                    
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = '❌ Identifiants invalides. Veuillez réessayer.';
+                    
+                    // Réactiver le bouton
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Se connecter';
+                }
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Erreur de connexion: ' + error.message;
+                
+                // Réactiver le bouton
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Se connecter';
+            }
+        });
+        
+        // Vérifier si déjà connecté au chargement
+        window.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('ecolegest_token');
+            const user = localStorage.getItem('ecolegest_user');
+            
+            if (token && user) {
+                console.log('Utilisateur déjà connecté, redirection...');
+                
+                try {
+                    const userObj = JSON.parse(user);
+                    let dashboardUrl = '/dashboard.html';
+                    
+                    if (userObj.roles && userObj.roles.length > 0) {
+                        const role = userObj.roles[0];
+                        
+                        switch(role) {
+                            case 'ADMIN':
+                            case 'DIRECTEUR':
+                                dashboardUrl = '/dashboard.html';
+                                break;
+                            case 'COMPTABLE':
+                                dashboardUrl = '/dashboard-comptable.html';
+                                break;
+                            case 'ENSEIGNANT':
+                                dashboardUrl = '/dashboard-enseignant.html';
+                                break;
+                            case 'PARENT':
+                                dashboardUrl = '/dashboard-parent.html';
+                                break;
+                        }
+                    }
+                    
+                    window.location.href = dashboardUrl;
+                } catch (e) {
+                    console.error('Erreur lors de la lecture du user:', e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - EcoleGest</title>
+    <!-- Cache Management -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="js/cache-buster.js"></script>
     <style>
         * {
             margin: 0;
@@ -289,6 +294,7 @@
     </div>
 
     <script src="js/api.js"></script>
+    <script src="js/dashboard-router.js"></script>
     <script>
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
@@ -307,8 +313,8 @@
                 
                 await AuthService.login(username, password);
                 
-                // Redirection vers le dashboard
-                window.location.href = '/dashboard.html';
+                // Redirection intelligente vers le dashboard selon le rôle
+                DashboardRouter.redirectToDashboard();
                 
             } catch (error) {
                 errorMessage.textContent = error.message || 'Erreur de connexion. Veuillez vérifier vos identifiants.';
@@ -318,9 +324,9 @@
             }
         });
 
-        // Si déjà connecté, rediriger
+        // Si déjà connecté, rediriger vers le bon dashboard
         if (AuthService.isAuthenticated()) {
-            window.location.href = '/dashboard.html';
+            DashboardRouter.redirectToDashboard();
         }
     </script>
 </body>

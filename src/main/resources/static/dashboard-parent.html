@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Parent - EcoleGest</title>
+    <!-- Cache Management -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="js/cache-buster.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard-premium.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            
+            <div class="menu-item active" data-page="dashboard-parent">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Accueil</span>
+            </div>
+            <div class="menu-item" data-page="mes-enfants">
+                <span class="menu-icon">👶</span>
+                <span class="menu-text">Mes Enfants</span>
+            </div>
+            <div class="menu-item" data-page="paiements-parent">
+                <span class="menu-icon">💳</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+            <div class="menu-item" data-page="bulletins">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Bulletins</span>
+            </div>
+            <div class="menu-item" data-page="communication">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Messages</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <h1>👋 Bienvenue, <span id="parentName">Parent</span>!</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;">Voici un aperçu de vos enfants et leurs activités</p>
+                </div>
+                <div class="header-actions">
+                    <div class="notification-icon" style="position: relative;">
+                        🔔
+                        <span class="notification-badge" id="notificationCount">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar" id="userAvatar">PA</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px;" id="userName">Parent</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Compte Parent</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enfants Cards -->
+            <div class="section-title" style="margin: 30px 0 20px 0; font-size: 20px; font-weight: 700;">👶 Mes Enfants</div>
+            <div id="enfantsGrid" class="stats-grid"></div>
+
+            <!-- Quick Actions Parent -->
+            <div class="quick-actions" style="margin-top: 30px;">
+                <button class="quick-action-btn" onclick="effectuerPaiement()">
+                    <span class="icon">💰</span>
+                    <span>Effectuer un Paiement</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="voirHistorique()">
+                    <span class="icon">📜</span>
+                    <span>Historique Paiements</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" onclick="demanderDerogation()">
+                    <span class="icon">📝</span>
+                    <span>Demander Dérogation</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" onclick="contacterEcole()">
+                    <span class="icon">📧</span>
+                    <span>Contacter l'École</span>
+                </button>
+            </div>
+
+            <!-- Stats Section Parent -->
+            <div class="charts-section" style="margin-top: 30px;">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">💰 Situation Financière</div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>Paiements effectués</span>
+                                <span id="pourcentagePaye">75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressPaiement" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px;">
+                            <div>
+                                <div style="font-size: 13px; color: #7f8c8d; margin-bottom: 5px;">Total payé</div>
+                                <div style="font-size: 24px; font-weight: 700; color: #43e97b;" id="totalPaye">750,000 BIF</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 13px; color: #7f8c8d; margin-bottom: 5px;">Reste à payer</div>
+                                <div style="font-size: 24px; font-weight: 700; color: #f5576c;" id="resteAPayer">250,000 BIF</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">📊 Performance Scolaire</div>
+                    </div>
+                    <div id="performanceList" style="padding: 20px;">
+                        <div class="spinner" style="margin: 20px auto;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Annonces de l'école -->
+            <div class="activity-section">
+                <div class="section-header">
+                    <div class="section-title">📢 Annonces de l'École</div>
+                    <div class="view-all" onclick="window.location.href='/communication.html'">Voir tout →</div>
+                </div>
+                <div id="annoncesList">
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px;">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard-parent.js"></script>
+</body>
+</html>

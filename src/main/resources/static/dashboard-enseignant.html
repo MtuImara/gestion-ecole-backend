@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Enseignant - EcoleGest</title>
+    <!-- Cache Management -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="js/cache-buster.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard-premium.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            
+            <div class="menu-item active" data-page="dashboard-enseignant">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Accueil</span>
+            </div>
+            <div class="menu-item" data-page="mes-classes">
+                <span class="menu-icon">📚</span>
+                <span class="menu-text">Mes Classes</span>
+            </div>
+            <div class="menu-item" data-page="notes">
+                <span class="menu-icon">📝</span>
+                <span class="menu-text">Notes</span>
+            </div>
+            <div class="menu-item" data-page="presences">
+                <span class="menu-icon">✅</span>
+                <span class="menu-text">Présences</span>
+            </div>
+            <div class="menu-item" data-page="emploi-temps">
+                <span class="menu-icon">📅</span>
+                <span class="menu-text">Emploi du Temps</span>
+            </div>
+            <div class="menu-item" data-page="communication">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Messages</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <h1>👨‍🏫 Bienvenue, <span id="enseignantName">Enseignant</span>!</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;" id="dateJour">Chargement...</p>
+                </div>
+                <div class="header-actions">
+                    <div class="notification-icon" style="position: relative;">
+                        🔔
+                        <span class="notification-badge" id="notificationCount">2</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar" id="userAvatar">EN</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px;" id="userName">Enseignant</div>
+                            <div style="font-size: 12px; color: #7f8c8d;" id="matiere">Mathématiques</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards Enseignant -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Mes Classes</div>
+                            <div class="stat-value" id="nombreClasses">-</div>
+                            <div class="stat-change" id="changeClasses">Chargement...</div>
+                        </div>
+                        <div class="stat-icon blue">📚</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Total Élèves</div>
+                            <div class="stat-value" id="totalEleves">-</div>
+                            <div class="stat-change" id="changeEleves">Chargement...</div>
+                        </div>
+                        <div class="stat-icon green">👨‍🎓</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Moyenne Générale</div>
+                            <div class="stat-value" id="moyenneGenerale">-</div>
+                            <div class="stat-change" id="changeMoyenne">Chargement...</div>
+                        </div>
+                        <div class="stat-icon orange">📊</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Taux de Présence</div>
+                            <div class="stat-value" id="tauxPresence">-</div>
+                            <div class="stat-change" id="changePresence">Cette semaine</div>
+                        </div>
+                        <div class="stat-icon purple">✅</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Enseignant -->
+            <div class="quick-actions" style="margin-top: 30px;">
+                <button class="quick-action-btn" onclick="saisirNotes()">
+                    <span class="icon">📝</span>
+                    <span>Saisir Notes</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="marquerPresences()">
+                    <span class="icon">✅</span>
+                    <span>Marquer Présences</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" onclick="consulterEmploiTemps()">
+                    <span class="icon">📅</span>
+                    <span>Emploi du Temps</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" onclick="envoyerMessage()">
+                    <span class="icon">💬</span>
+                    <span>Envoyer Message</span>
+                </button>
+            </div>
+
+            <!-- Mes Classes -->
+            <div class="section-title" style="margin: 30px 0 20px 0; font-size: 20px; font-weight: 700;">📚 Mes Classes</div>
+            <div id="classesGrid" class="stats-grid"></div>
+
+            <!-- Charts Section Enseignant -->
+            <div class="charts-section" style="margin-top: 30px;">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">📊 Performance par Classe</div>
+                        <select class="chart-filter" id="classeFilter">
+                            <option value="all">Toutes les classes</option>
+                        </select>
+                    </div>
+                    <div id="performanceChart" style="padding: 20px;">
+                        <div class="spinner" style="margin: 40px auto;"></div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">📅 Cours de la Semaine</div>
+                    </div>
+                    <div id="courseSemaine" style="padding: 20px;">
+                        <div class="spinner" style="margin: 40px auto;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Élèves en Difficulté -->
+            <div class="activity-section">
+                <div class="section-header">
+                    <div class="section-title">⚠️ Élèves Nécessitant une Attention</div>
+                    <div class="view-all" onclick="window.location.href='/mes-classes.html'">Voir tout →</div>
+                </div>
+                <div id="elevesDifficulteList">
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px;">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prochains Cours -->
+            <div class="activity-section" style="margin-top: 30px;">
+                <div class="section-header">
+                    <div class="section-title">📚 Prochains Cours</div>
+                    <div class="view-all" onclick="consulterEmploiTemps()">Voir tout →</div>
+                </div>
+                <div id="prochainsCoursList">
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px;">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard-enseignant.js"></script>
+</body>
+</html>

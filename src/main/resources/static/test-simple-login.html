@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login Ultra Simple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        #message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .credentials {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .credentials h3 {
+            margin-top: 0;
+            color: #666;
+        }
+        
+        .credentials code {
+            background: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Test Login Simple</h1>
+        
+        <div class="credentials">
+            <h3>Identifiants de test:</h3>
+            <p>Username: <code>admin</code></p>
+            <p>Password: <code>admin123</code></p>
+        </div>
+        
+        <input type="text" id="username" placeholder="Username" value="admin">
+        <input type="password" id="password" placeholder="Password" value="admin123">
+        
+        <button onclick="testLogin()">Se Connecter</button>
+        <button onclick="checkStatus()">Vérifier Status</button>
+        <button onclick="goToDashboard()">Aller au Dashboard</button>
+        
+        <div id="message"></div>
+    </div>
+
+    <script>
+        const messageDiv = document.getElementById('message');
+        
+        function showMessage(text, type = 'info') {
+            messageDiv.textContent = text;
+            messageDiv.className = type;
+            messageDiv.style.display = 'block';
+        }
+        
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            showMessage('Connexion en cours...', 'info');
+            
+            try {
+                // Étape 1: Appel API direct
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    showMessage(`Erreur ${response.status}: ${errorText}`, 'error');
+                    return;
+                }
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                // Étape 2: Sauvegarder le token et l'utilisateur
+                if (data.accessToken) {
+                    localStorage.setItem('ecolegest_token', data.accessToken);
+                    localStorage.setItem('ecolegest_user', JSON.stringify(data.user));
+                    
+                    showMessage('✅ Connexion réussie! Token sauvegardé.', 'success');
+                    
+                    // Afficher les infos
+                    const userInfo = `
+Utilisateur: ${data.user.username}
+Email: ${data.user.email}
+Rôles: ${JSON.stringify(data.user.roles)}
+Token: ${data.accessToken.substring(0, 50)}...
+                    `;
+                    
+                    messageDiv.innerHTML = '<strong>✅ Connexion réussie!</strong><pre>' + userInfo + '</pre>';
+                    messageDiv.className = 'success';
+                    
+                    // Étape 3: Proposer la redirection
+                    setTimeout(() => {
+                        if (confirm('Voulez-vous aller au dashboard maintenant?')) {
+                            goToDashboard();
+                        }
+                    }, 1000);
+                } else {
+                    showMessage('⚠️ Pas de token reçu', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                showMessage(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function checkStatus() {
+            const token = localStorage.getItem('ecolegest_token');
+            const user = localStorage.getItem('ecolegest_user');
+            
+            if (token && user) {
+                const userObj = JSON.parse(user);
+                showMessage(`✅ Connecté en tant que: ${userObj.username}`, 'success');
+            } else {
+                showMessage('❌ Non connecté', 'error');
+            }
+        }
+        
+        function goToDashboard() {
+            const user = localStorage.getItem('ecolegest_user');
+            
+            if (!user) {
+                showMessage('❌ Vous devez vous connecter d\'abord', 'error');
+                return;
+            }
+            
+            const userObj = JSON.parse(user);
+            const role = userObj.roles && userObj.roles[0] ? userObj.roles[0] : 'ADMIN';
+            
+            // Déterminer le dashboard selon le rôle
+            let dashboardUrl = '/dashboard.html';
+            
+            switch(role) {
+                case 'ADMIN':
+                case 'DIRECTEUR':
+                    dashboardUrl = '/dashboard.html';
+                    break;
+                case 'COMPTABLE':
+                    dashboardUrl = '/dashboard-comptable.html';
+                    break;
+                case 'ENSEIGNANT':
+                    dashboardUrl = '/dashboard-enseignant.html';
+                    break;
+                case 'PARENT':
+                    dashboardUrl = '/dashboard-parent.html';
+                    break;
+            }
+            
+            console.log('Redirection vers:', dashboardUrl);
+            window.location.href = dashboardUrl;
+        }
+        
+        // Au chargement, vérifier le status
+        window.addEventListener('DOMContentLoaded', () => {
+            checkStatus();
+        });
+    </script>
+</body>
+</html>

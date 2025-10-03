@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - EcoleGest</title>
+    <!-- Cache Management -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 10000;
+        }
+        
+        .debug-info.success {
+            background: rgba(40, 167, 69, 0.9);
+        }
+        
+        .debug-info.error {
+            background: rgba(220, 53, 69, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <!-- Debug Info -->
+    <div id="debugInfo" class="debug-info"></div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            
+            <div class="menu-item active" onclick="window.location.href='/dashboard-fixed.html'">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/eleves.html'">
+                <span class="menu-icon">👨‍🎓</span>
+                <span class="menu-text">Élèves</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/classes.html'">
+                <span class="menu-icon">🏫</span>
+                <span class="menu-text">Classes</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/enseignants.html'">
+                <span class="menu-icon">👨‍🏫</span>
+                <span class="menu-text">Enseignants</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/parents.html'">
+                <span class="menu-icon">👪</span>
+                <span class="menu-text">Parents</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/paiements.html'">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+            
+            <div class="menu-item" onclick="logout()">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Dashboard Admin</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;">Vue d'ensemble de l'établissement</p>
+                </div>
+                <div class="header-actions">
+                    <div class="user-info">
+                        <span id="userName">Admin</span>
+                        <div class="user-avatar">👤</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">👨‍🎓</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalEleves">0</div>
+                        <div class="stat-label">Élèves inscrits</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">👨‍🏫</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalEnseignants">0</div>
+                        <div class="stat-label">Enseignants</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🏫</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalClasses">0</div>
+                        <div class="stat-label">Classes</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">💰</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalPaiements">0 FCFA</div>
+                        <div class="stat-label">Paiements ce mois</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-section">
+                <div class="section-header">
+                    <div class="section-title">Activités récentes</div>
+                    <div class="view-all" onclick="window.location.href='/paiements.html'">Voir tout →</div>
+                </div>
+
+                <div id="activitiesList">
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <p>Chargement des activités...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fonction de debug
+        function showDebug(message, type = 'info') {
+            const debugDiv = document.getElementById('debugInfo');
+            debugDiv.innerHTML = message;
+            debugDiv.className = 'debug-info ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '');
+        }
+        
+        // Vérification de l'authentification
+        function checkAuth() {
+            const token = localStorage.getItem('ecolegest_token');
+            const user = localStorage.getItem('ecolegest_user');
+            
+            console.log('Dashboard - Vérification auth');
+            console.log('Token:', token ? 'Présent' : 'Absent');
+            console.log('User:', user ? 'Présent' : 'Absent');
+            
+            if (!token || !user) {
+                showDebug('❌ Non authentifié', 'error');
+                console.log('Redirection vers login...');
+                setTimeout(() => {
+                    window.location.href = '/login-simple.html';
+                }, 2000);
+                return false;
+            }
+            
+            try {
+                const userObj = JSON.parse(user);
+                showDebug(`✅ Connecté: ${userObj.username} (${userObj.roles ? userObj.roles[0] : 'N/A'})`, 'success');
+                
+                // Mettre à jour le nom d'utilisateur
+                document.getElementById('userName').textContent = userObj.username;
+                
+                return true;
+            } catch (e) {
+                console.error('Erreur parsing user:', e);
+                showDebug('❌ Erreur données utilisateur', 'error');
+                return false;
+            }
+        }
+        
+        // Fonction de déconnexion
+        function logout() {
+            localStorage.removeItem('ecolegest_token');
+            localStorage.removeItem('ecolegest_user');
+            window.location.href = '/login-simple.html';
+        }
+        
+        // Charger les statistiques (simulées pour le moment)
+        function loadStats() {
+            // Simuler des données
+            document.getElementById('totalEleves').textContent = '156';
+            document.getElementById('totalEnseignants').textContent = '12';
+            document.getElementById('totalClasses').textContent = '8';
+            document.getElementById('totalPaiements').textContent = '2.5M FCFA';
+            
+            // Simuler des activités
+            const activities = [
+                { time: 'Il y a 5 min', text: 'Nouveau paiement de 50,000 FCFA par Parent Dupont', icon: '💰' },
+                { time: 'Il y a 15 min', text: 'Nouvel élève inscrit: Marie Martin', icon: '👨‍🎓' },
+                { time: 'Il y a 1h', text: 'Classe 6ème A mise à jour', icon: '🏫' },
+                { time: 'Il y a 2h', text: 'Nouveau parent enregistré: M. Dupont', icon: '👪' }
+            ];
+            
+            let html = '';
+            activities.forEach(activity => {
+                html += `
+                    <div style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #f0f0f0;">
+                        <div style="font-size: 24px; margin-right: 15px;">${activity.icon}</div>
+                        <div style="flex: 1;">
+                            <div style="color: #2c3e50; font-weight: 500;">${activity.text}</div>
+                            <div style="color: #95a5a6; font-size: 12px; margin-top: 5px;">${activity.time}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('activitiesList').innerHTML = html;
+        }
+        
+        // Charger les vraies données depuis l'API
+        async function loadRealStats() {
+            const token = localStorage.getItem('ecolegest_token');
+            
+            if (!token) {
+                console.log('Pas de token pour charger les stats');
+                return;
+            }
+            
+            try {
+                // Essayer de charger les élèves
+                const response = await fetch('/api/eleves/count', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const count = await response.text();
+                    document.getElementById('totalEleves').textContent = count;
+                    console.log('Stats élèves chargées:', count);
+                }
+            } catch (error) {
+                console.log('Erreur chargement stats:', error);
+                // Garder les données simulées
+            }
+        }
+        
+        // Au chargement de la page
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('Dashboard chargé');
+            
+            // Vérifier l'authentification
+            if (checkAuth()) {
+                // Charger les statistiques
+                loadStats();
+                
+                // Essayer de charger les vraies données
+                loadRealStats();
+            }
+        });
+    </script>
+</body>
+</html>

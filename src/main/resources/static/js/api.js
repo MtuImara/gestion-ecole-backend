@@ -23,6 +23,11 @@ const AuthService = {
         return user ? JSON.parse(user) : null;
     },
     
+    getUserId() {
+        const user = this.getUser();
+        return user ? user.id : null;
+    },
+    
     setUser(user) {
         localStorage.setItem(USER_KEY, JSON.stringify(user));
     },
@@ -33,7 +38,9 @@ const AuthService = {
     
     async login(username, password) {
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            console.log('Tentative de connexion pour:', username);
+            
+            const response = await fetch('/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -41,13 +48,33 @@ const AuthService = {
                 body: JSON.stringify({ username, password })
             });
             
+            console.log('Response status:', response.status);
+            
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Erreur login:', errorText);
                 throw new Error('Identifiants invalides');
             }
             
             const data = await response.json();
-            this.setToken(data.accessToken);  // Correction: accessToken au lieu de token
-            this.setUser(data.user);
+            console.log('Login response:', data);
+            
+            // Vérifier et sauvegarder le token
+            if (data.accessToken) {
+                this.setToken(data.accessToken);
+                console.log('Token sauvegardé');
+            } else {
+                console.error('Pas de accessToken dans la réponse');
+            }
+            
+            // Sauvegarder l'utilisateur
+            if (data.user) {
+                this.setUser(data.user);
+                console.log('User sauvegardé:', data.user);
+            } else {
+                console.error('Pas de user dans la réponse');
+            }
+            
             return data;
         } catch (error) {
             console.error('Erreur de connexion:', error);
@@ -151,6 +178,15 @@ const EleveAPI = {
         if (anneeScolaireId) url += `&anneeScolaireId=${anneeScolaireId}`;
         if (statut) url += `&statut=${statut}`;
         return apiCall(url);
+    },
+    
+    // Méthodes pour le dashboard parent
+    async getByParent(parentId) {
+        return apiCall(`/eleves/parent/${parentId}`);
+    },
+    
+    async getPerformances(parentId) {
+        return apiCall(`/eleves/parent/${parentId}/performances`);
     }
 };
 
@@ -208,6 +244,19 @@ const PaiementAPI = {
     
     async getPaiementsEnAttente(page = 0, size = 20) {
         return apiCall(`/paiements/en-attente?page=${page}&size=${size}`);
+    },
+    
+    // Méthodes pour dashboards
+    async getSituationFinanciere(parentId) {
+        return apiCall(`/paiements/parent/${parentId}/situation`);
+    },
+    
+    async getStatistiquesComptable() {
+        return apiCall('/paiements/statistiques-comptable');
+    },
+    
+    async getStatistiquesParMode() {
+        return apiCall('/paiements/statistiques-par-mode');
     }
 };
 
@@ -620,6 +669,27 @@ const EnseignantAPI = {
         return apiCall(`/enseignants/${id}`, {
             method: 'DELETE'
         });
+    },
+    
+    // Méthodes pour le dashboard enseignant
+    async getStatistiques(enseignantId) {
+        return apiCall(`/enseignants/${enseignantId}/statistiques`);
+    },
+    
+    async getClasses(enseignantId) {
+        return apiCall(`/enseignants/${enseignantId}/classes`);
+    },
+    
+    async getPerformances(enseignantId) {
+        return apiCall(`/enseignants/${enseignantId}/performances`);
+    },
+    
+    async getElevesDifficulte(enseignantId) {
+        return apiCall(`/enseignants/${enseignantId}/eleves-difficulte`);
+    },
+    
+    async getProchainsCours(enseignantId) {
+        return apiCall(`/enseignants/${enseignantId}/prochains-cours`);
     }
 };
 
@@ -782,10 +852,24 @@ const Utils = {
 
 // Vérifier l'authentification au chargement
 document.addEventListener('DOMContentLoaded', () => {
-    const publicPages = ['/login.html', '/register.html'];
+    const publicPages = ['/login.html', '/register.html', '/login-simple.html', '/test-final.html', '/diagnostic-login.html', '/test-auth.html', '/test-simple-login.html', '/test-login.html'];
     const currentPage = window.location.pathname;
     
-    if (!publicPages.includes(currentPage) && !AuthService.isAuthenticated()) {
+    console.log('Vérification auth - Page actuelle:', currentPage);
+    console.log('Token présent:', !!AuthService.getToken());
+    console.log('Authentifié:', AuthService.isAuthenticated());
+    
+    // Ne pas rediriger si on est sur une page publique
+    if (publicPages.includes(currentPage)) {
+        console.log('Page publique, pas de vérification');
+        return;
+    }
+    
+    // Vérifier l'authentification pour les pages protégées
+    if (!AuthService.isAuthenticated()) {
+        console.log('Non authentifié, redirection vers login');
         window.location.href = '/login.html';
+    } else {
+        console.log('Authentifié, accès autorisé');
     }
 });

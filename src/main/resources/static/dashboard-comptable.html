@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Comptable - EcoleGest</title>
+    <!-- Cache Management -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="js/cache-buster.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard-premium.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            
+            <div class="menu-item active" data-page="dashboard-comptable">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </div>
+            <div class="menu-item" data-page="validation-paiements">
+                <span class="menu-icon">✅</span>
+                <span class="menu-text">Validation Paiements</span>
+            </div>
+            <div class="menu-item" data-page="paiements">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+            <div class="menu-item" data-page="recus">
+                <span class="menu-icon">🧾</span>
+                <span class="menu-text">Reçus</span>
+            </div>
+            <div class="menu-item" data-page="derogations">
+                <span class="menu-icon">📝</span>
+                <span class="menu-text">Dérogations</span>
+            </div>
+            <div class="menu-item" data-page="rapports">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">Rapports</span>
+            </div>
+            <div class="menu-item" id="logoutBtn">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Déconnexion</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <h1>💼 Tableau de bord Comptable</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;" id="dateJour">Chargement...</p>
+                </div>
+                <div class="header-actions">
+                    <div class="notification-icon" style="position: relative;">
+                        🔔
+                        <span class="notification-badge" id="notificationCount">0</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar" id="userAvatar">CO</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px;" id="userName">Comptable</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Service Financier</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards Financières -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Recouvrements du jour</div>
+                            <div class="stat-value" id="recouvrementJour">-</div>
+                            <div class="stat-change" id="changeJour">Chargement...</div>
+                        </div>
+                        <div class="stat-icon blue">💰</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Recouvrements du mois</div>
+                            <div class="stat-value" id="recouvrementMois">-</div>
+                            <div class="stat-change" id="changeMois">Chargement...</div>
+                        </div>
+                        <div class="stat-icon green">📈</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">En attente validation</div>
+                            <div class="stat-value" id="paiementsEnAttente">-</div>
+                            <div class="stat-change" id="changeAttente">À traiter</div>
+                        </div>
+                        <div class="stat-icon orange">⏳</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Taux de recouvrement</div>
+                            <div class="stat-value" id="tauxRecouvrement">-</div>
+                            <div class="stat-change" id="changeTaux">Chargement...</div>
+                        </div>
+                        <div class="stat-icon purple">🎯</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Comptable -->
+            <div class="quick-actions" style="margin-top: 30px;">
+                <button class="quick-action-btn" onclick="window.location.href='/validation-paiements.html'">
+                    <span class="icon">✅</span>
+                    <span>Valider Paiements</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="window.location.href='/paiements.html'">
+                    <span class="icon">💳</span>
+                    <span>Enregistrer Paiement</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" onclick="genererRapport()">
+                    <span class="icon">📊</span>
+                    <span>Rapport Journalier</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" onclick="window.location.href='/recus.html'">
+                    <span class="icon">🧾</span>
+                    <span>Gérer Reçus</span>
+                </button>
+            </div>
+
+            <!-- Charts Section Comptable -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">💰 Recouvrements par Mode</div>
+                        <select class="chart-filter" id="modeFilter">
+                            <option value="today">Aujourd'hui</option>
+                            <option value="week">Cette semaine</option>
+                            <option value="month" selected>Ce mois</option>
+                        </select>
+                    </div>
+                    <div id="modesPaiement" style="padding: 20px;">
+                        <div class="spinner" style="margin: 40px auto;"></div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">📊 Évolution Mensuelle</div>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div style="text-align: center;">
+                            <div style="font-size: 64px;">📈</div>
+                            <div style="font-size: 16px; color: #667eea; margin-top: 10px;">Tendance des recouvrements</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paiements à valider -->
+            <div class="activity-section">
+                <div class="section-header">
+                    <div class="section-title">⏳ Paiements en Attente de Validation</div>
+                    <div class="view-all" onclick="window.location.href='/validation-paiements.html'">Voir tout →</div>
+                </div>
+                <div id="paiementsAttenteList">
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px;">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dernières transactions -->
+            <div class="activity-section" style="margin-top: 30px;">
+                <div class="section-header">
+                    <div class="section-title">💳 Dernières Transactions</div>
+                    <div class="view-all" onclick="window.location.href='/paiements.html'">Voir tout →</div>
+                </div>
+                <div id="transactionsList">
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px;">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard-comptable.js"></script>
+</body>
+</html>

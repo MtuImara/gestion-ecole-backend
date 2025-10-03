@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Complet Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5em;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-card h2 {
+            color: #667eea;
+            margin-top: 0;
+            font-size: 1.3em;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-ok { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+        
+        .credentials-box {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .credentials-box h3 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: #d63384;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnostic Complet - Système de Login</h1>
+        
+        <div class="credentials-box">
+            <h3>📝 Identifiants de Test</h3>
+            <p><strong>Admin:</strong> username: <code>admin</code>, password: <code>admin123</code></p>
+            <p><strong>Comptable:</strong> username: <code>comptable</code>, password: <code>comptable123</code></p>
+            <p><strong>Parent:</strong> username: <code>parent1</code>, password: <code>parent123</code></p>
+            <p><strong>Enseignant:</strong> username: <code>enseignant1</code>, password: <code>enseignant123</code></p>
+        </div>
+        
+        <div class="test-grid">
+            <!-- Test 1: API Backend -->
+            <div class="test-card">
+                <h2><span class="status-indicator" id="status1"></span>1. Test Backend API</h2>
+                <button onclick="testBackendAPI()">Tester l'API</button>
+                <button onclick="testAuthEndpoint()">Tester /auth/login</button>
+                <div id="result1" class="result"></div>
+            </div>
+            
+            <!-- Test 2: Login Direct -->
+            <div class="test-card">
+                <h2><span class="status-indicator" id="status2"></span>2. Test Login Direct</h2>
+                <button onclick="testDirectLogin()">Login Admin (Direct)</button>
+                <button onclick="testAllUsers()">Tester Tous les Users</button>
+                <div id="result2" class="result"></div>
+            </div>
+            
+            <!-- Test 3: AuthService -->
+            <div class="test-card">
+                <h2><span class="status-indicator" id="status3"></span>3. Test AuthService</h2>
+                <button onclick="testAuthService()">Login via AuthService</button>
+                <button onclick="checkAuthServiceStatus()">Vérifier AuthService</button>
+                <div id="result3" class="result"></div>
+            </div>
+            
+            <!-- Test 4: LocalStorage -->
+            <div class="test-card">
+                <h2><span class="status-indicator" id="status4"></span>4. Test LocalStorage</h2>
+                <button onclick="checkLocalStorage()">Vérifier Storage</button>
+                <button onclick="clearLocalStorage()">Nettoyer Storage</button>
+                <div id="result4" class="result"></div>
+            </div>
+            
+            <!-- Test 5: Dashboard Router -->
+            <div class="test-card">
+                <h2><span class="status-indicator" id="status5"></span>5. Test Dashboard Router</h2>
+                <button onclick="testDashboardRouter()">Tester Router</button>
+                <button onclick="simulateRedirection()">Simuler Redirection</button>
+                <div id="result5" class="result"></div>
+            </div>
+            
+            <!-- Test 6: Page Login Complète -->
+            <div class="test-card">
+                <h2><span class="status-indicator" id="status6"></span>6. Test Complet</h2>
+                <button onclick="testCompleteFlow()">Test Flow Complet</button>
+                <button onclick="goToLogin()">Aller à Login.html</button>
+                <button onclick="goToDashboard()">Aller au Dashboard</button>
+                <div id="result6" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard-router.js"></script>
+    <script>
+        // Fonctions utilitaires
+        function log(elementId, message, type = 'info') {
+            const resultDiv = document.getElementById(elementId);
+            const statusDiv = document.getElementById(elementId.replace('result', 'status'));
+            
+            const timestamp = new Date().toLocaleTimeString();
+            resultDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            resultDiv.scrollTop = resultDiv.scrollHeight;
+            
+            // Mettre à jour l'indicateur de status
+            if (statusDiv) {
+                if (type === 'success') statusDiv.className = 'status-indicator status-ok';
+                else if (type === 'error') statusDiv.className = 'status-indicator status-error';
+                else if (type === 'warning') statusDiv.className = 'status-indicator status-warning';
+            }
+            
+            // Changer la couleur du fond
+            if (type === 'success') resultDiv.className = 'result success';
+            else if (type === 'error') resultDiv.className = 'result error';
+            else if (type === 'warning') resultDiv.className = 'result warning';
+            else resultDiv.className = 'result info';
+        }
+        
+        function clearLog(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+        
+        // Test 1: Backend API
+        async function testBackendAPI() {
+            clearLog('result1');
+            log('result1', 'Test de connexion au backend...');
+            
+            try {
+                const response = await fetch('/api/annees-scolaires/active');
+                log('result1', `Status: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log('result1', `✅ API accessible! Année active: ${data.libelle}`, 'success');
+                } else {
+                    log('result1', `⚠️ API répond avec erreur: ${response.status}`, 'warning');
+                }
+            } catch (error) {
+                log('result1', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAuthEndpoint() {
+            log('result1', '\nTest endpoint /auth/login...');
+            
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'test', password: 'test' })
+                });
+                
+                log('result1', `Status: ${response.status}`);
+                
+                if (response.status === 401 || response.status === 403) {
+                    log('result1', '✅ Endpoint fonctionne (401/403 pour mauvais identifiants)', 'success');
+                } else if (response.ok) {
+                    log('result1', '✅ Endpoint fonctionne', 'success');
+                }
+            } catch (error) {
+                log('result1', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test 2: Login Direct
+        async function testDirectLogin() {
+            clearLog('result2');
+            log('result2', 'Test login direct avec admin/admin123...');
+            
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+                
+                log('result2', `Status: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log('result2', '✅ Login réussi!', 'success');
+                    log('result2', `Token: ${data.accessToken ? data.accessToken.substring(0, 50) + '...' : 'Non reçu'}`);
+                    log('result2', `User: ${JSON.stringify(data.user, null, 2)}`);
+                    
+                    // Sauvegarder pour les tests suivants
+                    if (data.accessToken) {
+                        localStorage.setItem('ecolegest_token', data.accessToken);
+                        localStorage.setItem('ecolegest_user', JSON.stringify(data.user));
+                        log('result2', '✅ Token et user sauvegardés dans localStorage', 'success');
+                    }
+                } else {
+                    const error = await response.text();
+                    log('result2', `❌ Erreur: ${error}`, 'error');
+                }
+            } catch (error) {
+                log('result2', `❌ Exception: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAllUsers() {
+            const users = [
+                { username: 'admin', password: 'admin123' },
+                { username: 'comptable', password: 'comptable123' },
+                { username: 'parent1', password: 'parent123' },
+                { username: 'enseignant1', password: 'enseignant123' }
+            ];
+            
+            clearLog('result2');
+            log('result2', 'Test de tous les utilisateurs...\n');
+            
+            for (const user of users) {
+                try {
+                    const response = await fetch('/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(user)
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        log('result2', `✅ ${user.username}: OK - Rôle: ${data.user.roles}`, 'success');
+                    } else {
+                        log('result2', `❌ ${user.username}: Échec`, 'error');
+                    }
+                } catch (error) {
+                    log('result2', `❌ ${user.username}: ${error.message}`, 'error');
+                }
+            }
+        }
+        
+        // Test 3: AuthService
+        async function testAuthService() {
+            clearLog('result3');
+            log('result3', 'Test login via AuthService...');
+            
+            try {
+                const result = await AuthService.login('admin', 'admin123');
+                log('result3', '✅ Login AuthService réussi!', 'success');
+                log('result3', `Token: ${result.accessToken ? result.accessToken.substring(0, 50) + '...' : 'Non reçu'}`);
+                log('result3', `User: ${JSON.stringify(result.user, null, 2)}`);
+            } catch (error) {
+                log('result3', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function checkAuthServiceStatus() {
+            log('result3', '\nVérification AuthService...');
+            log('result3', `AuthService disponible: ${typeof AuthService !== 'undefined' ? '✅ Oui' : '❌ Non'}`);
+            log('result3', `isAuthenticated: ${AuthService.isAuthenticated() ? '✅ Oui' : '❌ Non'}`);
+            
+            const token = AuthService.getToken();
+            const user = AuthService.getUser();
+            
+            if (token) {
+                log('result3', `✅ Token trouvé: ${token.substring(0, 50)}...`, 'success');
+            } else {
+                log('result3', '❌ Pas de token', 'warning');
+            }
+            
+            if (user) {
+                log('result3', `✅ User trouvé: ${JSON.stringify(user)}`, 'success');
+            } else {
+                log('result3', '❌ Pas de user', 'warning');
+            }
+        }
+        
+        // Test 4: LocalStorage
+        function checkLocalStorage() {
+            clearLog('result4');
+            log('result4', 'Vérification du LocalStorage...\n');
+            
+            const token = localStorage.getItem('ecolegest_token');
+            const user = localStorage.getItem('ecolegest_user');
+            
+            if (token) {
+                log('result4', `✅ Token trouvé: ${token.substring(0, 50)}...`, 'success');
+            } else {
+                log('result4', '❌ Pas de token dans localStorage', 'error');
+            }
+            
+            if (user) {
+                try {
+                    const userObj = JSON.parse(user);
+                    log('result4', `✅ User trouvé: ${JSON.stringify(userObj, null, 2)}`, 'success');
+                    log('result4', `Rôles: ${userObj.roles}`);
+                } catch (e) {
+                    log('result4', '⚠️ User invalide dans localStorage', 'warning');
+                }
+            } else {
+                log('result4', '❌ Pas de user dans localStorage', 'error');
+            }
+            
+            // Vérifier tous les items
+            log('result4', '\nTous les items dans localStorage:');
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                log('result4', `${key}: ${value.substring(0, 50)}...`);
+            }
+        }
+        
+        function clearLocalStorage() {
+            localStorage.clear();
+            log('result4', '✅ LocalStorage nettoyé', 'success');
+        }
+        
+        // Test 5: Dashboard Router
+        function testDashboardRouter() {
+            clearLog('result5');
+            log('result5', 'Test du Dashboard Router...\n');
+            
+            log('result5', `DashboardRouter disponible: ${typeof DashboardRouter !== 'undefined' ? '✅ Oui' : '❌ Non'}`);
+            
+            const user = AuthService.getUser();
+            if (!user) {
+                log('result5', '❌ Pas d\'utilisateur connecté', 'error');
+                return;
+            }
+            
+            log('result5', `User: ${user.username}`);
+            log('result5', `Rôles: ${JSON.stringify(user.roles)}`);
+            
+            // Déterminer le rôle
+            let role = null;
+            if (user.roles && Array.isArray(user.roles) && user.roles.length > 0) {
+                role = user.roles[0];
+            }
+            
+            log('result5', `Rôle sélectionné: ${role}`);
+            
+            const dashboardUrl = DashboardRouter.DASHBOARDS[role] || '/dashboard.html';
+            log('result5', `✅ Dashboard URL: ${dashboardUrl}`, 'success');
+        }
+        
+        function simulateRedirection() {
+            log('result5', '\nSimulation de redirection...');
+            
+            const user = AuthService.getUser();
+            if (!user) {
+                log('result5', '❌ Connectez-vous d\'abord!', 'error');
+                return;
+            }
+            
+            try {
+                // Ne pas vraiment rediriger, juste simuler
+                const role = user.roles && user.roles[0] ? user.roles[0] : 'ADMIN';
+                const url = DashboardRouter.DASHBOARDS[role] || '/dashboard.html';
+                log('result5', `✅ Redirection simulée vers: ${url}`, 'success');
+                log('result5', 'Cliquez sur "Aller au Dashboard" pour y aller vraiment');
+            } catch (error) {
+                log('result5', `❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test 6: Flow Complet
+        async function testCompleteFlow() {
+            clearLog('result6');
+            log('result6', 'Test du flow complet...\n');
+            
+            // Étape 1: Login
+            log('result6', 'Étape 1: Login...');
+            try {
+                await AuthService.login('admin', 'admin123');
+                log('result6', '✅ Login réussi', 'success');
+            } catch (error) {
+                log('result6', `❌ Login échoué: ${error.message}`, 'error');
+                return;
+            }
+            
+            // Étape 2: Vérifier le token
+            log('result6', '\nÉtape 2: Vérification token...');
+            if (AuthService.isAuthenticated()) {
+                log('result6', '✅ Authentifié', 'success');
+            } else {
+                log('result6', '❌ Non authentifié', 'error');
+                return;
+            }
+            
+            // Étape 3: Vérifier l'utilisateur
+            log('result6', '\nÉtape 3: Vérification utilisateur...');
+            const user = AuthService.getUser();
+            if (user) {
+                log('result6', `✅ User: ${user.username}`, 'success');
+                log('result6', `Rôles: ${JSON.stringify(user.roles)}`);
+            } else {
+                log('result6', '❌ Pas d\'utilisateur', 'error');
+                return;
+            }
+            
+            // Étape 4: Déterminer le dashboard
+            log('result6', '\nÉtape 4: Détermination du dashboard...');
+            const role = user.roles && user.roles[0] ? user.roles[0] : 'ADMIN';
+            const dashboardUrl = DashboardRouter.DASHBOARDS[role] || '/dashboard.html';
+            log('result6', `✅ Dashboard: ${dashboardUrl}`, 'success');
+            
+            log('result6', '\n✅ TOUT EST OK! Vous pouvez aller au dashboard', 'success');
+        }
+        
+        function goToLogin() {
+            window.location.href = '/login.html';
+        }
+        
+        function goToDashboard() {
+            const user = AuthService.getUser();
+            if (!user) {
+                log('result6', '❌ Connectez-vous d\'abord!', 'error');
+                return;
+            }
+            
+            const role = user.roles && user.roles[0] ? user.roles[0] : 'ADMIN';
+            const dashboardUrl = DashboardRouter.DASHBOARDS[role] || '/dashboard.html';
+            window.location.href = dashboardUrl;
+        }
+        
+        // Au chargement
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('Page de diagnostic chargée');
+            console.log('AuthService:', typeof AuthService !== 'undefined' ? 'OK' : 'NON TROUVÉ');
+            console.log('DashboardRouter:', typeof DashboardRouter !== 'undefined' ? 'OK' : 'NON TROUVÉ');
+        });
+    </script>
+</body>
+</html>

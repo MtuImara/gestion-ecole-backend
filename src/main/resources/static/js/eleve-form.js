@@ -1,16 +1,82 @@
-﻿// Gestion du formulaire modal d'élève
+// Gestion du formulaire modal d'élève
 
 let isEditMode = false;
 let currentEleveId = null;
 
+// Utilitaires pour notifications
+const Utils = {
+    showNotification: function(message, type = 'info') {
+        // Créer une notification temporaire
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Supprimer après 3 secondes
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+};
+
 // Ouvrir le modal de création
 function openCreateModal() {
-    isEditMode = false;
-    currentEleveId = null;
-    document.getElementById('modalTitle').textContent = 'Nouvel Élève';
-    document.getElementById('eleveForm').reset();
-    document.getElementById('eleveModal').style.display = 'flex';
-    loadClasses();
+    console.log('openCreateModal appelée');
+    
+    try {
+        const modal = document.getElementById('eleveModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const form = document.getElementById('eleveForm');
+        
+        if (!modal) {
+            console.error('Modal eleveModal non trouvé!');
+            alert('Erreur: Le modal n\'a pas pu être trouvé');
+            return;
+        }
+        
+        if (!modalTitle) {
+            console.error('modalTitle non trouvé!');
+        }
+        
+        if (!form) {
+            console.error('eleveForm non trouvé!');
+        }
+        
+        isEditMode = false;
+        currentEleveId = null;
+        
+        if (modalTitle) {
+            modalTitle.textContent = 'Nouvel Élève';
+        }
+        
+        if (form) {
+            form.reset();
+        }
+        
+        modal.style.display = 'flex';
+        console.log('Modal affiché avec succès');
+        
+        loadClasses();
+    } catch (error) {
+        console.error('Erreur dans openCreateModal:', error);
+        alert('Erreur lors de l\'ouverture du modal: ' + error.message);
+    }
 }
 
 // Ouvrir le modal d'édition
@@ -41,15 +107,52 @@ function closeModal() {
 
 // Charger les classes pour le select
 async function loadClasses() {
+    console.log('loadClasses appelée');
     try {
-        const classes = await ClasseAPI.getAll();
         const select = document.getElementById('classeId');
+        if (!select) {
+            console.error('Select classeId non trouvé!');
+            return;
+        }
+        
+        // Vérifier si ClasseAPI existe
+        if (typeof ClasseAPI === 'undefined') {
+            console.warn('ClasseAPI non défini, utilisation de données de test');
+            // Données de test
+            const classes = [
+                {id: 1, nom: '6ème A'},
+                {id: 2, nom: '5ème B'},
+                {id: 3, nom: '4ème C'}
+            ];
+            
+            select.innerHTML = '<option value="">Sélectionner une classe</option>';
+            classes.forEach(classe => {
+                select.innerHTML += `<option value="${classe.id}">${classe.nom}</option>`;
+            });
+            return;
+        }
+        
+        const classes = await ClasseAPI.getAll();
+        console.log('Classes chargées:', classes);
+        
         select.innerHTML = '<option value="">Sélectionner une classe</option>';
-        classes.forEach(classe => {
-            select.innerHTML += <option value="+classe.id+">+classe.nom+</option>;
-        });
+        
+        if (classes && classes.length > 0) {
+            classes.forEach(classe => {
+                select.innerHTML += `<option value="${classe.id}">${classe.nom}</option>`;
+            });
+        } else {
+            console.warn('Aucune classe trouvée');
+        }
     } catch (error) {
         console.error('Erreur chargement classes:', error);
+        // Utiliser des données de test en cas d'erreur
+        const select = document.getElementById('classeId');
+        if (select) {
+            select.innerHTML = '<option value="">Sélectionner une classe</option>';
+            select.innerHTML += '<option value="1">6ème A (Test)</option>';
+            select.innerHTML += '<option value="2">5ème B (Test)</option>';
+        }
     }
 }
 

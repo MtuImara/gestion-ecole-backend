@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Élève</title>
+    <!-- Cache Management -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="js/cache-buster.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .test-button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .console-output {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de Diagnostic - Modal Élève</h1>
+    
+    <div>
+        <button class="test-button" onclick="testOpenModal()">
+            Test 1: Ouvrir Modal Simple
+        </button>
+        
+        <button class="test-button" onclick="testCheckElements()">
+            Test 2: Vérifier Éléments DOM
+        </button>
+        
+        <button class="test-button" onclick="testLoadClasses()">
+            Test 3: Charger Classes
+        </button>
+        
+        <button class="test-button" onclick="testFullModal()">
+            Test 4: Modal Complet
+        </button>
+    </div>
+    
+    <div id="console" class="console-output">Console de test...</div>
+    
+    <!-- Modal Simple de Test -->
+    <div id="testModal" class="modal">
+        <div class="modal-content">
+            <h2>Modal de Test</h2>
+            <p>Si vous voyez ceci, le modal fonctionne!</p>
+            <form id="testForm">
+                <div style="margin: 20px 0;">
+                    <label>Nom:</label>
+                    <input type="text" id="testNom" style="width: 100%; padding: 8px; margin-top: 5px;">
+                </div>
+                <div style="margin: 20px 0;">
+                    <label>Classe:</label>
+                    <select id="testClasse" style="width: 100%; padding: 8px; margin-top: 5px;">
+                        <option value="">Sélectionner...</option>
+                    </select>
+                </div>
+                <button type="button" onclick="closeTestModal()" style="padding: 10px 20px; background: #e0e0e0; border: none; border-radius: 5px; cursor: pointer;">
+                    Fermer
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const consoleDiv = document.getElementById('console');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            consoleDiv.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            console.log(message);
+        }
+        
+        function testOpenModal() {
+            try {
+                log('Test 1: Ouverture du modal simple...');
+                const modal = document.getElementById('testModal');
+                if (modal) {
+                    modal.classList.add('show');
+                    log('✓ Modal ouvert avec succès!', 'success');
+                } else {
+                    log('✗ Modal non trouvé dans le DOM', 'error');
+                }
+            } catch (error) {
+                log(`✗ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function closeTestModal() {
+            const modal = document.getElementById('testModal');
+            modal.classList.remove('show');
+            log('Modal fermé');
+        }
+        
+        function testCheckElements() {
+            log('Test 2: Vérification des éléments DOM...');
+            
+            // Vérifier les éléments critiques
+            const elements = [
+                'eleveModal',
+                'modalTitle',
+                'eleveForm',
+                'matricule',
+                'nom',
+                'prenom',
+                'classeId'
+            ];
+            
+            let allFound = true;
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    log(`✓ Élément '${id}' trouvé`, 'success');
+                } else {
+                    log(`✗ Élément '${id}' NON trouvé`, 'error');
+                    allFound = false;
+                }
+            });
+            
+            if (allFound) {
+                log('✓ Tous les éléments sont présents!', 'success');
+            } else {
+                log('✗ Certains éléments manquent', 'error');
+            }
+        }
+        
+        async function testLoadClasses() {
+            log('Test 3: Chargement des classes...');
+            
+            try {
+                // Simuler l'appel API
+                const classes = [
+                    {id: 1, nom: '6ème A'},
+                    {id: 2, nom: '5ème B'},
+                    {id: 3, nom: '4ème C'}
+                ];
+                
+                const select = document.getElementById('testClasse');
+                select.innerHTML = '<option value="">Sélectionner une classe</option>';
+                
+                classes.forEach(classe => {
+                    const option = document.createElement('option');
+                    option.value = classe.id;
+                    option.textContent = classe.nom;
+                    select.appendChild(option);
+                });
+                
+                log(`✓ ${classes.length} classes chargées`, 'success');
+            } catch (error) {
+                log(`✗ Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function testFullModal() {
+            log('Test 4: Test du modal complet...');
+            
+            // Vérifier si les fonctions existent
+            if (typeof openCreateModal === 'function') {
+                log('✓ Fonction openCreateModal existe', 'success');
+                try {
+                    openCreateModal();
+                    log('✓ Modal ouvert via openCreateModal()', 'success');
+                } catch (error) {
+                    log(`✗ Erreur lors de l'ouverture: ${error.message}`, 'error');
+                }
+            } else {
+                log('✗ Fonction openCreateModal non définie', 'error');
+                log('Tentative de définition de la fonction...');
+                
+                // Définir la fonction si elle n'existe pas
+                window.openCreateModal = function() {
+                    const modal = document.getElementById('eleveModal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        log('✓ Modal ouvert avec fonction de secours', 'success');
+                    } else {
+                        log('✗ Modal eleveModal non trouvé', 'error');
+                    }
+                };
+                
+                window.closeModal = function() {
+                    const modal = document.getElementById('eleveModal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                };
+            }
+        }
+        
+        // Test automatique au chargement
+        window.addEventListener('DOMContentLoaded', () => {
+            log('Page de test chargée');
+            
+            // Vérifier si les scripts sont chargés
+            if (typeof EleveAPI !== 'undefined') {
+                log('✓ API chargée', 'success');
+            } else {
+                log('✗ API non chargée', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

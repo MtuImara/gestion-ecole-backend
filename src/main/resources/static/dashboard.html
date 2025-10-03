@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - EcoleGest</title>
+    <!-- Cache Management -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="js/cache-buster.js"></script>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard-premium.css">
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
     <div class="container">
@@ -119,11 +126,31 @@
                 </div>
             </div>
 
+            <!-- Quick Actions -->
+            <div class="quick-actions" style="margin-top: 30px;">
+                <button class="quick-action-btn" onclick="window.location.href='/eleves.html'">
+                    <span class="icon">👨‍🎓</span>
+                    <span>Nouvel Élève</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="window.location.href='/paiements.html'">
+                    <span class="icon">💰</span>
+                    <span>Enregistrer Paiement</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" onclick="window.location.href='/validation-paiements.html'">
+                    <span class="icon">✅</span>
+                    <span>Valider Paiements</span>
+                </button>
+                <button class="quick-action-btn" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" onclick="window.location.href='/communication.html'">
+                    <span class="icon">📢</span>
+                    <span>Nouvelle Annonce</span>
+                </button>
+            </div>
+
             <!-- Charts Section -->
             <div class="charts-section">
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-title">Évolution des recouvrements</div>
+                        <div class="chart-title">📊 Évolution des recouvrements</div>
                         <select class="chart-filter" id="periodFilter">
                             <option value="30">30 derniers jours</option>
                             <option value="90">3 derniers mois</option>
@@ -131,16 +158,22 @@
                         </select>
                     </div>
                     <div class="chart-placeholder">
-                        📊 Graphique d'évolution des paiements
+                        <div style="text-align: center;">
+                            <div style="font-size: 64px;">📈</div>
+                            <div style="font-size: 16px; color: #667eea; margin-top: 10px;">Graphique d'évolution</div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-title">Modes de paiement</div>
+                        <div class="chart-title">💳 Modes de paiement</div>
                     </div>
                     <div class="chart-placeholder">
-                        🥧 Répartition par mode
+                        <div style="text-align: center;">
+                            <div style="font-size: 64px;">🥧</div>
+                            <div style="font-size: 16px; color: #667eea; margin-top: 10px;">Répartition par mode</div>
+                        </div>
                     </div>
                 </div>
             </div>
