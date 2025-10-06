@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - EcoleGest</title>
+    <!-- BLOQUEUR TOTAL - DOIT ÊTRE LE PREMIER -->
+    <script src="js/block-all-redirects.js"></script>
     <!-- Cache Management -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <script src="js/cache-buster.js"></script>
+    <!-- Chart.js pour les graphiques -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF pour export PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- SheetJS pour export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/dashboard-premium.css">
     <link rel="stylesheet" href="css/animations.css">
@@ -64,7 +72,13 @@
                     <h1>Tableau de bord</h1>
                     <p style="color: #7f8c8d; margin-top: 5px;" id="anneeScolaire">Chargement...</p>
                 </div>
-                <div class="header-actions">
+                <div class="header-actions" style="display: flex; gap: 15px; align-items: center;">
+                    <!-- Boutons d'actions rapides -->
+                    <button onclick="window.dashboardExport?.exportToPDF()" title="PDF" style="padding: 6px 10px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">📄</button>
+                    <button onclick="window.dashboardExport?.exportToExcel()" title="Excel" style="padding: 6px 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">📊</button>
+                    <button onclick="window.dashboardExport?.print()" title="Imprimer" style="padding: 6px 10px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">🖨️</button>
+                    <button onclick="window.dashboardRealtime?.refresh()" title="Actualiser" style="padding: 6px 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄</button>
+                    
                     <div class="notification-icon">
                         🔔
                         <span class="notification-badge" id="notificationCount">0</span>
@@ -146,34 +160,46 @@
                 </button>
             </div>
 
-            <!-- Charts Section -->
-            <div class="charts-section">
+            <!-- Charts Section avec vrais graphiques -->
+            <div class="charts-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin: 30px 0;">
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-title">📊 Évolution des recouvrements</div>
+                        <div class="chart-title">📊 Répartition des élèves</div>
                         <select class="chart-filter" id="periodFilter">
-                            <option value="30">30 derniers jours</option>
-                            <option value="90">3 derniers mois</option>
-                            <option value="365">Cette année</option>
+                            <option value="30">Par classe</option>
+                            <option value="90">Par niveau</option>
+                            <option value="365">Par âge</option>
                         </select>
                     </div>
-                    <div class="chart-placeholder">
-                        <div style="text-align: center;">
-                            <div style="font-size: 64px;">📈</div>
-                            <div style="font-size: 16px; color: #667eea; margin-top: 10px;">Graphique d'évolution</div>
-                        </div>
+                    <div style="position: relative; height: 300px; margin-top: 20px;">
+                        <canvas id="chartEleves"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <div class="chart-title">💳 Modes de paiement</div>
+                        <div class="chart-title">💰 Évolution des paiements</div>
                     </div>
-                    <div class="chart-placeholder">
-                        <div style="text-align: center;">
-                            <div style="font-size: 64px;">🥧</div>
-                            <div style="font-size: 16px; color: #667eea; margin-top: 10px;">Répartition par mode</div>
-                        </div>
+                    <div style="position: relative; height: 300px; margin-top: 20px;">
+                        <canvas id="chartPaiements"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">👥 Répartition par genre</div>
+                    </div>
+                    <div style="position: relative; height: 300px; margin-top: 20px;">
+                        <canvas id="chartGenre"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">📅 Taux de présence</div>
+                    </div>
+                    <div style="position: relative; height: 300px; margin-top: 20px;">
+                        <canvas id="chartPresence"></canvas>
                     </div>
                 </div>
             </div>
@@ -195,7 +221,40 @@
         </div>
     </div>
 
+    <!-- Protection contre les redirections - DOIT être chargé EN PREMIER -->
+    <script src="js/no-redirect.js"></script>
+    <script src="js/no-auth-check.js"></script>
     <script src="js/api.js"></script>
+    <script src="js/api-integration.js"></script>
     <script src="js/dashboard.js"></script>
+    <script src="js/dashboard-realtime.js"></script>
+    <script src="js/dashboard-export.js"></script>
+    <script src="js/dashboard-filters.js"></script>
+    <script src="js/dashboard-notifications.js"></script>
+    <!-- Modules de gestion -->
+    <script src="js/eleves-management.js"></script>
+    <script src="js/paiements-module.js"></script>
+    <script src="js/classes-module.js"></script>
+    <script src="js/parents-module.js"></script>
+    <script src="js/derogations-module.js"></script>
+    
+    <!-- Script d'intégration finale -->
+    <script>
+        // Initialiser l'export avec les données
+        document.addEventListener('DOMContentLoaded', () => {
+            // Créer l'instance d'export
+            const dashboardExport = new DashboardExport();
+            
+            // Attendre que les données soient chargées
+            setTimeout(() => {
+                if (window.dashboardRealtime && window.dashboardRealtime.data) {
+                    dashboardExport.setData(window.dashboardRealtime.data);
+                }
+            }, 2000);
+            
+            // Exposer globalement
+            window.dashboardExport = dashboardExport;
+        });
+    </script>
 </body>
 </html>

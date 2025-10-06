@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Statistiques - EcoleGest</title>
+    <!-- BLOQUEUR TOTAL - DOIT ÊTRE LE PREMIER -->
+    <script src="js/block-all-redirects.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .chart-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .chart-box h3 {
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-mini {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .stat-mini-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        
+        .stat-mini-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .stat-mini-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <span class="logo-text">EcoleGest</span>
+            </div>
+            
+            <div class="menu-item active" data-page="dashboard">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard Stats</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/eleves.html'">
+                <span class="menu-icon">👨‍🎓</span>
+                <span class="menu-text">Élèves</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/classes.html'">
+                <span class="menu-icon">🏫</span>
+                <span class="menu-text">Classes</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='/paiements.html'">
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Paiements</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Tableau de Bord Statistiques</h1>
+                    <p style="color: #7f8c8d; margin-top: 5px;">Analyse complète de votre établissement</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-refresh" onclick="refreshCharts()">🔄 Actualiser</button>
+                    <div class="user-info">
+                        <span id="userName">Admin</span>
+                        <div class="user-avatar">👤</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mini Stats -->
+            <div class="stats-summary">
+                <div class="stat-mini">
+                    <div class="stat-mini-icon">👨‍🎓</div>
+                    <div class="stat-mini-value" id="miniStatEleves">156</div>
+                    <div class="stat-mini-label">Total Élèves</div>
+                </div>
+                
+                <div class="stat-mini">
+                    <div class="stat-mini-icon">👨‍🏫</div>
+                    <div class="stat-mini-value" id="miniStatEnseignants">12</div>
+                    <div class="stat-mini-label">Enseignants</div>
+                </div>
+                
+                <div class="stat-mini">
+                    <div class="stat-mini-icon">🏫</div>
+                    <div class="stat-mini-value" id="miniStatClasses">8</div>
+                    <div class="stat-mini-label">Classes</div>
+                </div>
+                
+                <div class="stat-mini">
+                    <div class="stat-mini-icon">💰</div>
+                    <div class="stat-mini-value" id="miniStatPaiements">2.6M</div>
+                    <div class="stat-mini-label">Paiements (BIF)</div>
+                </div>
+                
+                <div class="stat-mini">
+                    <div class="stat-mini-icon">📈</div>
+                    <div class="stat-mini-value" id="miniStatPresence">92%</div>
+                    <div class="stat-mini-label">Taux Présence</div>
+                </div>
+                
+                <div class="stat-mini">
+                    <div class="stat-mini-icon">⚠️</div>
+                    <div class="stat-mini-value" id="miniStatRetards">15</div>
+                    <div class="stat-mini-label">Paiements en retard</div>
+                </div>
+            </div>
+
+            <!-- Graphiques -->
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>📊 Répartition des élèves par classe</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chartEleves"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-box">
+                    <h3>💰 Évolution des paiements</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chartPaiements"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-box">
+                    <h3>👥 Répartition par genre</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chartGenre"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-box">
+                    <h3>📅 Taux de présence hebdomadaire</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chartPresence"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tableau des dernières activités -->
+            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 20px;">
+                <h3 style="margin: 0 0 20px 0; color: #2c3e50;">📋 Activités récentes</h3>
+                <div id="recentActivities">
+                    <!-- Sera rempli dynamiquement -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/no-redirect.js"></script>
+    <script src="js/no-auth-check.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard-charts.js"></script>
+    <script>
+        // Fonction pour rafraîchir les graphiques
+        function refreshCharts() {
+            console.log('Rafraîchissement des graphiques...');
+            if (window.dashboardCharts) {
+                window.dashboardCharts.refresh();
+            }
+        }
+
+        // Charger les activités récentes
+        function loadRecentActivities() {
+            const activities = [
+                { icon: '➕', type: 'success', title: 'Nouvel élève inscrit', detail: 'Marie Dupont - 6ème A', time: 'Il y a 2 heures' },
+                { icon: '💰', type: 'info', title: 'Paiement reçu', detail: '150,000 BIF - Jean Martin', time: 'Il y a 3 heures' },
+                { icon: '📝', type: 'warning', title: 'Note ajoutée', detail: 'Examen de mathématiques - 5ème B', time: 'Il y a 5 heures' },
+                { icon: '👨‍🏫', type: 'info', title: 'Enseignant absent', detail: 'M. Durand - Remplacé', time: 'Hier' },
+                { icon: '📢', type: 'success', title: 'Annonce publiée', detail: 'Réunion parents-professeurs', time: 'Hier' }
+            ];
+
+            const container = document.getElementById('recentActivities');
+            container.innerHTML = activities.map(activity => `
+                <div style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #f0f0f0;">
+                    <div style="font-size: 24px; margin-right: 15px;">${activity.icon}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #2c3e50;">${activity.title}</div>
+                        <div style="color: #7f8c8d; font-size: 14px;">${activity.detail}</div>
+                    </div>
+                    <div style="color: #95a5a6; font-size: 12px;">${activity.time}</div>
+                </div>
+            `).join('');
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecentActivities();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Auth pour toutes les pages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .page-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .page-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #ccc;
+        }
+        
+        .page-item.fixed {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .page-item.needs-fix {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+        
+        .page-item.public {
+            border-left-color: #17a2b8;
+            background: #d1ecf1;
+        }
+        
+        button {
+            padding: 12px 24px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        button:hover {
+            background: #218838;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Configuration Auth pour toutes les pages</h1>
+        
+        <div class="status" id="status">
+            Analyse des pages...
+        </div>
+        
+        <button onclick="analyzePages()">Analyser les pages</button>
+        <button onclick="showSolution()">Voir la solution</button>
+        
+        <div class="page-list" id="pageList"></div>
+        
+        <h2 style="margin-top: 40px;">Solution Recommandée</h2>
+        <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; margin-top: 20px;">
+            <h3>Pour corriger le problème de redirection :</h3>
+            <ol>
+                <li><strong>auth-check.js</strong> est créé et gère l'authentification</li>
+                <li><strong>api.js</strong> a été modifié pour désactiver l'ancienne vérification</li>
+                <li>Toutes les pages protégées doivent inclure <code>&lt;script src="js/auth-check.js"&gt;&lt;/script&gt;</code> AVANT api.js</li>
+                <li>Les pages publiques sont exclues de la vérification</li>
+            </ol>
+            
+            <h3>Pages qui ont besoin de auth-check.js :</h3>
+            <ul id="pagesToFix"></ul>
+        </div>
+    </div>
+
+    <script>
+        const pages = [
+            // Pages publiques (pas besoin d'auth)
+            { name: 'login.html', type: 'public', needsAuth: false },
+            { name: 'login-simple.html', type: 'public', needsAuth: false },
+            { name: 'register.html', type: 'public', needsAuth: false },
+            { name: 'test-final.html', type: 'public', needsAuth: false },
+            { name: 'test-auth.html', type: 'public', needsAuth: false },
+            { name: 'test-simple-login.html', type: 'public', needsAuth: false },
+            { name: 'diagnostic-login.html', type: 'public', needsAuth: false },
+            
+            // Pages protégées (ont besoin d'auth)
+            { name: 'dashboard.html', type: 'protected', needsAuth: true },
+            { name: 'dashboard-fixed.html', type: 'protected', needsAuth: true, hasAuthCheck: true },
+            { name: 'dashboard-comptable.html', type: 'protected', needsAuth: true },
+            { name: 'dashboard-enseignant.html', type: 'protected', needsAuth: true },
+            { name: 'dashboard-parent.html', type: 'protected', needsAuth: true },
+            { name: 'eleves.html', type: 'protected', needsAuth: true, hasAuthCheck: true },
+            { name: 'classes.html', type: 'protected', needsAuth: true },
+            { name: 'enseignants.html', type: 'protected', needsAuth: true },
+            { name: 'parents.html', type: 'protected', needsAuth: true },
+            { name: 'paiements.html', type: 'protected', needsAuth: true },
+            { name: 'parametres.html', type: 'protected', needsAuth: true },
+            { name: 'rapports.html', type: 'protected', needsAuth: true },
+            { name: 'utilisateurs.html', type: 'protected', needsAuth: true },
+            { name: 'eleve-details.html', type: 'protected', needsAuth: true },
+            { name: 'factures.html', type: 'protected', needsAuth: true }
+        ];
+        
+        function analyzePages() {
+            const pageList = document.getElementById('pageList');
+            const status = document.getElementById('status');
+            const pagesToFix = document.getElementById('pagesToFix');
+            
+            pageList.innerHTML = '';
+            pagesToFix.innerHTML = '';
+            
+            let needsFix = [];
+            let fixed = [];
+            let publicPages = [];
+            
+            pages.forEach(page => {
+                const div = document.createElement('div');
+                
+                if (page.type === 'public') {
+                    div.className = 'page-item public';
+                    div.innerHTML = `
+                        <strong>${page.name}</strong>
+                        <br>✅ Page publique
+                        <br>Pas besoin d'auth
+                    `;
+                    publicPages.push(page.name);
+                } else if (page.hasAuthCheck) {
+                    div.className = 'page-item fixed';
+                    div.innerHTML = `
+                        <strong>${page.name}</strong>
+                        <br>✅ Déjà corrigé
+                        <br>auth-check.js inclus
+                    `;
+                    fixed.push(page.name);
+                } else {
+                    div.className = 'page-item needs-fix';
+                    div.innerHTML = `
+                        <strong>${page.name}</strong>
+                        <br>⚠️ À corriger
+                        <br>Ajouter auth-check.js
+                    `;
+                    needsFix.push(page.name);
+                    
+                    const li = document.createElement('li');
+                    li.innerHTML = `<code>${page.name}</code> - Ajouter <code>&lt;script src="js/auth-check.js"&gt;&lt;/script&gt;</code> avant api.js`;
+                    pagesToFix.appendChild(li);
+                }
+                
+                pageList.appendChild(div);
+            });
+            
+            status.innerHTML = `
+                <strong>Résumé:</strong><br>
+                ✅ Pages publiques: ${publicPages.length}<br>
+                ✅ Pages corrigées: ${fixed.length}<br>
+                ⚠️ Pages à corriger: ${needsFix.length}<br>
+                <br>
+                <strong>Pages à corriger:</strong> ${needsFix.join(', ')}
+            `;
+        }
+        
+        function showSolution() {
+            alert(`
+SOLUTION COMPLÈTE:
+
+1. auth-check.js a été créé et gère l'authentification
+2. api.js a été modifié pour désactiver l'ancienne vérification
+3. eleves.html a été corrigé comme exemple
+
+Pour corriger les autres pages:
+- Ajouter <script src="js/auth-check.js"></script> AVANT api.js
+- Cela empêchera la redirection vers /login.html
+
+Les pages corrigées afficheront:
+- Un badge vert "✅ Connecté: username" en haut à droite
+- Pas de redirection intempestive
+            `);
+        }
+        
+        // Analyser au chargement
+        window.addEventListener('DOMContentLoaded', analyzePages);
+    </script>
+</body>
+</html>

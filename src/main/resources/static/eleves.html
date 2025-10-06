@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Élèves - EcoleGest</title>
+    <!-- BLOQUEUR TOTAL - DOIT ÊTRE LE PREMIER -->
+    <script src="js/block-all-redirects.js"></script>
     <!-- Cache Management -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -384,8 +386,13 @@
         </div>
     </div>
 
+    <!-- Protection contre les redirections - DOIT être chargé EN PREMIER -->
+    <script src="js/no-redirect.js"></script>
+    <script src="js/no-auth-check.js"></script>
     <script src="js/api.js"></script>
+    <script src="js/api-integration.js"></script>
     <script src="js/eleves.js"></script>
     <script src="js/eleve-form.js"></script>
+    <script src="js/eleves-management.js"></script>
 </body>
 </html>

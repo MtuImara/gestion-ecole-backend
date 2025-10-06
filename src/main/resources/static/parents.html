@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Parents - EcoleGest</title>
+    <!-- BLOQUEUR TOTAL - DOIT ÊTRE LE PREMIER -->
+    <script src="js/block-all-redirects.js"></script>
     <!-- Cache Management -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -79,11 +81,15 @@
                         <p>Chargement...</p>
                     </div>
                 </div>
-            </div>
-        </div>
     </div>
 
+    <!-- Protection contre les redirections -->
+    <script src="js/no-redirect.js"></script>
     <script src="js/api.js"></script>
+    <script src="js/parents.js"></script>
+    <script src="js/parents-module.js"></script>
+</body>
+</html>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('logoutBtn').addEventListener('click', () => AuthService.logout());

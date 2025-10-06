@@ -293,8 +293,10 @@
         </div>
     </div>
 
+    <!-- Protection contre les redirections problématiques -->
+    <script src="js/no-redirect.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/dashboard-router.js"></script>
+    <script src="js/dashboard-router-safe.js"></script>
     <script>
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
@@ -311,12 +313,66 @@
                 loginButton.textContent = 'Connexion en cours...';
                 errorMessage.style.display = 'none';
                 
-                await AuthService.login(username, password);
+                console.log('Tentative de connexion pour:', username);
                 
-                // Redirection intelligente vers le dashboard selon le rôle
-                DashboardRouter.redirectToDashboard();
+                // Appel direct à l'API sans passer par AuthService
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('Identifiants invalides');
+                }
+                
+                const data = await response.json();
+                console.log('Login successful, data received:', data);
+                
+                // Sauvegarder le token et l'utilisateur
+                if (data.accessToken) {
+                    localStorage.setItem('ecolegest_token', data.accessToken);
+                    console.log('Token saved');
+                }
+                
+                if (data.user) {
+                    localStorage.setItem('ecolegest_user', JSON.stringify(data.user));
+                    console.log('User saved:', data.user);
+                }
+                
+                // Redirection vers le dashboard original
+                let dashboardUrl = '/dashboard.html';
+                
+                if (data.user && data.user.roles && data.user.roles.length > 0) {
+                    const role = data.user.roles[0];
+                    console.log('User role:', role);
+                    
+                    switch(role) {
+                        case 'ADMIN':
+                        case 'DIRECTEUR':
+                            dashboardUrl = '/dashboard.html';
+                            break;
+                        case 'COMPTABLE':
+                            dashboardUrl = '/dashboard-comptable.html';
+                            break;
+                        case 'ENSEIGNANT':
+                            dashboardUrl = '/dashboard-enseignant.html';
+                            break;
+                        case 'PARENT':
+                            dashboardUrl = '/dashboard-parent.html';
+                            break;
+                    }
+                }
+                
+                console.log('Redirecting to:', dashboardUrl);
+                window.location.href = dashboardUrl;
                 
             } catch (error) {
+                console.error('Login error:', error);
                 errorMessage.textContent = error.message || 'Erreur de connexion. Veuillez vérifier vos identifiants.';
                 errorMessage.style.display = 'block';
                 loginButton.disabled = false;
@@ -324,9 +380,13 @@
             }
         });
 
-        // Si déjà connecté, rediriger vers le bon dashboard
-        if (AuthService.isAuthenticated()) {
-            DashboardRouter.redirectToDashboard();
+        // Vérifier si déjà connecté (sans redirection automatique)
+        const token = localStorage.getItem('ecolegest_token');
+        const user = localStorage.getItem('ecolegest_user');
+        
+        if (token && user) {
+            console.log('Utilisateur déjà connecté, vous pouvez aller au dashboard manuellement');
+            // Ne pas rediriger automatiquement pour éviter les boucles
         }
     </script>
 </body>

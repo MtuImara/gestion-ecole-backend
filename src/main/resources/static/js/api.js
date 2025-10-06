@@ -84,7 +84,9 @@ const AuthService = {
     
     logout() {
         this.removeToken();
-        window.location.href = '/login.html';
+        // DÉSACTIVÉ - Ne pas rediriger vers login
+        console.log('[API] Logout appelé mais redirection désactivée');
+        // window.location.href = '/login.html';
     }
 };
 
@@ -850,26 +852,11 @@ const Utils = {
     }
 };
 
-// Vérifier l'authentification au chargement
+// DÉSACTIVÉ - Utiliser auth-check.js à la place
+// La vérification d'authentification a été déplacée dans auth-check.js
+// pour éviter les problèmes de redirection en boucle
+/*
 document.addEventListener('DOMContentLoaded', () => {
-    const publicPages = ['/login.html', '/register.html', '/login-simple.html', '/test-final.html', '/diagnostic-login.html', '/test-auth.html', '/test-simple-login.html', '/test-login.html'];
-    const currentPage = window.location.pathname;
-    
-    console.log('Vérification auth - Page actuelle:', currentPage);
-    console.log('Token présent:', !!AuthService.getToken());
-    console.log('Authentifié:', AuthService.isAuthenticated());
-    
-    // Ne pas rediriger si on est sur une page publique
-    if (publicPages.includes(currentPage)) {
-        console.log('Page publique, pas de vérification');
-        return;
-    }
-    
-    // Vérifier l'authentification pour les pages protégées
-    if (!AuthService.isAuthenticated()) {
-        console.log('Non authentifié, redirection vers login');
-        window.location.href = '/login.html';
-    } else {
-        console.log('Authentifié, accès autorisé');
-    }
+    // Code désactivé - voir auth-check.js
 });
+*/

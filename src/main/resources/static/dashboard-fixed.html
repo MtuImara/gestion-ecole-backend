@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - EcoleGest</title>
+    <title>Dashboard - EcoleGest</title>
+    <!-- BLOQUEUR TOTAL - DOIT ÊTRE LE PREMIER -->
+    <script src="js/block-all-redirects.js"></script>
     <!-- Cache Management -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <!-- Chart.js pour les graphiques -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .debug-info {
             position: fixed;
@@ -49,27 +53,27 @@
                 <span class="menu-text">Dashboard</span>
             </div>
             
-            <div class="menu-item" onclick="window.location.href='/eleves.html'">
+            <div class="menu-item" onclick="navigateTo('/eleves.html')">
                 <span class="menu-icon">👨‍🎓</span>
                 <span class="menu-text">Élèves</span>
             </div>
             
-            <div class="menu-item" onclick="window.location.href='/classes.html'">
+            <div class="menu-item" onclick="navigateTo('/classes.html')">
                 <span class="menu-icon">🏫</span>
                 <span class="menu-text">Classes</span>
             </div>
             
-            <div class="menu-item" onclick="window.location.href='/enseignants.html'">
+            <div class="menu-item" onclick="navigateTo('/enseignants.html')">
                 <span class="menu-icon">👨‍🏫</span>
                 <span class="menu-text">Enseignants</span>
             </div>
             
-            <div class="menu-item" onclick="window.location.href='/parents.html'">
+            <div class="menu-item" onclick="navigateTo('/parents.html')">
                 <span class="menu-icon">👪</span>
                 <span class="menu-text">Parents</span>
             </div>
             
-            <div class="menu-item" onclick="window.location.href='/paiements.html'">
+            <div class="menu-item" onclick="navigateTo('/paiements.html')">
                 <span class="menu-icon">💰</span>
                 <span class="menu-text">Paiements</span>
             </div>
@@ -123,28 +127,25 @@
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">💰</div>
                     <div class="stat-content">
-                        <div class="stat-value" id="totalPaiements">0 FCFA</div>
-                        <div class="stat-label">Paiements ce mois</div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Recent Activity -->
+            <!-- Activités récentes -->
             <div class="activity-section">
                 <div class="section-header">
                     <div class="section-title">Activités récentes</div>
-                    <div class="view-all" onclick="window.location.href='/paiements.html'">Voir tout →</div>
+                    <div class="view-all">Voir tout →</div>
                 </div>
 
                 <div id="activitiesList">
                     <div style="text-align: center; padding: 40px; color: #7f8c8d;">
                         <p>Chargement des activités...</p>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Protection contre les redirections - DOIT être chargé EN PREMIER -->
+    <script src="js/no-redirect.js"></script>
     <script>
         // Fonction de debug
         function showDebug(message, type = 'info') {
@@ -184,6 +185,12 @@
                 showDebug('❌ Erreur données utilisateur', 'error');
                 return false;
             }
+        }
+        
+        // Fonction de navigation simple sans vérification
+        function navigateTo(url) {
+            console.log('Navigation vers:', url);
+            window.location.href = url;
         }
         
         // Fonction de déconnexion
