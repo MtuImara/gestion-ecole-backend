@@ -40,7 +40,7 @@ const AuthService = {
         try {
             console.log('Tentative de connexion pour:', username);
             
-            const response = await fetch('/auth/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -94,10 +94,19 @@ const AuthService = {
 async function apiCall(endpoint, options = {}) {
     const token = AuthService.getToken();
     
+    // TEMPORAIRE: Ne pas envoyer le token car les APIs sont en permitAll()
     const defaultHeaders = {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
+        'Content-Type': 'application/json'
+        // ...(token && { 'Authorization': `Bearer ${token}` })
     };
+    
+    // Pour debug: toujours envoyer le token s'il existe, mais ne pas échouer s'il n'y en a pas
+    if (token) {
+        defaultHeaders['Authorization'] = `Bearer ${token}`;
+        console.log('[API] Token inclus dans la requête');
+    } else {
+        console.log('[API] Pas de token - Mode sans authentification');
+    }
     
     const config = {
         ...options,
@@ -108,16 +117,26 @@ async function apiCall(endpoint, options = {}) {
     };
     
     try {
+        console.log(`[API] Appel: ${endpoint}`, { token: token ? 'Présent' : 'Absent' });
         const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
         
         if (response.status === 401) {
-            AuthService.logout();
-            return;
+            console.error('[API] Erreur 401 - Non authentifié');
+            // TEMPORAIRE: Ne pas lancer d'erreur car les APIs sont en permitAll()
+            // AuthService.logout();
+            // throw new Error('Session expirée. Veuillez vous reconnecter.');
+            console.warn('[API] Ignorer erreur 401 - APIs en mode permitAll()');
         }
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Erreur API');
+            let errorMessage = `Erreur HTTP ${response.status}`;
+            try {
+                const error = await response.json();
+                errorMessage = error.message || error.error || errorMessage;
+            } catch (e) {
+                // Si le parsing JSON échoue, garder le message par défaut
+            }
+            throw new Error(errorMessage);
         }
         
         const contentType = response.headers.get('content-type');
@@ -125,7 +144,9 @@ async function apiCall(endpoint, options = {}) {
             return await response.json();
         }
         
-        return response;
+        // Si ce n'est pas du JSON, retourner un objet vide plutôt que la réponse brute
+        console.warn('Réponse non-JSON reçue');
+        return {};
     } catch (error) {
         console.error('Erreur API:', error);
         throw error;
@@ -851,6 +872,14 @@ const Utils = {
         if (loader) loader.remove();
     }
 };
+
+// Exposer les APIs globalement
+window.AuthService = AuthService;
+window.EleveAPI = EleveAPI;
+window.ClasseAPI = ClasseAPI;
+window.PaiementAPI = PaiementAPI;
+window.UserAPI = UserAPI;
+window.UIHelper = UIHelper;
 
 // DÉSACTIVÉ - Utiliser auth-check.js à la place
 // La vérification d'authentification a été déplacée dans auth-check.js

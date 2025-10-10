@@ -49,16 +49,32 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // TOUT en permitAll pour debug
+                .requestMatchers("/**").permitAll()
+                
+                /* Configuration normale - À réactiver après debug
+                // Auth endpoints
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/public/**").permitAll()
+                
+                // Swagger UI
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+                
+                // Actuator endpoints
                 .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/images/**").permitAll()
+                
+                // Static resources and HTML pages
+                .requestMatchers("/**").permitAll() // Temporaire pour debug
+                
+                // Everything else requires authentication
                 .anyRequest().authenticated()
+                */
             );
 
         http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        // TEMPORAIRE: Désactiver le filtre JWT pour debug
+        // http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

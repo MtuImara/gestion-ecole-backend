@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/eleves")
+@RequestMapping("/api/eleves")
 @RequiredArgsConstructor
 @Tag(name = "Élèves", description = "Gestion des élèves")
 public class EleveController {

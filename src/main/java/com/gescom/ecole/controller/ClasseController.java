@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/classes")
+@RequestMapping("/api/classes")
 @RequiredArgsConstructor
 @Tag(name = "Classes", description = "Gestion des classes")
 public class ClasseController {

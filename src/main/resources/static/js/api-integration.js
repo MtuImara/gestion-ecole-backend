@@ -20,8 +20,15 @@ class APIIntegration {
     // Gestion des erreurs
     async handleResponse(response) {
         if (!response.ok) {
-            const error = await response.json().catch(() => ({ message: 'Erreur inconnue' }));
-            throw new Error(error.message || `Erreur HTTP: ${response.status}`);
+            let errorMessage = `Erreur HTTP: ${response.status}`;
+            try {
+                const error = await response.json();
+                console.error('[API] Détails de l\'erreur:', error);
+                errorMessage = error.message || error.error || errorMessage;
+            } catch (e) {
+                console.error('[API] Impossible de parser l\'erreur:', e);
+            }
+            throw new Error(errorMessage);
         }
         return response.json();
     }
@@ -54,12 +61,15 @@ class APIIntegration {
 
     async createEleve(eleveData) {
         try {
+            console.log('[API] Données envoyées pour création élève:', eleveData);
             const response = await fetch(`${this.baseURL}/eleves`, {
                 method: 'POST',
                 headers: this.getHeaders(),
                 body: JSON.stringify(eleveData)
             });
-            return await this.handleResponse(response);
+            const result = await this.handleResponse(response);
+            console.log('[API] Élève créé avec succès:', result);
+            return result;
         } catch (error) {
             console.error('[API] Erreur création élève:', error);
             throw error;

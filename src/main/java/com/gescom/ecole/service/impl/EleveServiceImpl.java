@@ -43,7 +43,7 @@ public class EleveServiceImpl implements EleveService {
         
         // Vérifier l'unicité du matricule
         if (eleveRepository.existsByMatricule(eleveDTO.getMatricule())) {
-            throw new RuntimeException("Un élève avec ce matricule existe déjà");
+            throw new RuntimeException("Un élève avec ce matricule existe déjà: " + eleveDTO.getMatricule());
         }
         
         Eleve eleve = eleveMapper.toEntity(eleveDTO);
@@ -53,8 +53,11 @@ public class EleveServiceImpl implements EleveService {
         // Gérer la classe si fournie
         if (eleveDTO.getClasse() != null) {
             Classe classe = classeRepository.findById(eleveDTO.getClasse())
-                .orElseThrow(() -> new RuntimeException("Classe non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Classe non trouvée avec l'ID: " + eleveDTO.getClasse()));
             eleve.setClasse(classe);
+            log.info("Classe assignée: {} ({})", classe.getCode(), classe.getId());
+        } else {
+            log.warn("Aucune classe fournie pour l'élève");
         }
         
         eleve = eleveRepository.save(eleve);

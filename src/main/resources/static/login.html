@@ -316,7 +316,7 @@
                 console.log('Tentative de connexion pour:', username);
                 
                 // Appel direct à l'API sans passer par AuthService
-                const response = await fetch('/auth/login', {
+                const response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

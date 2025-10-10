@@ -316,65 +316,79 @@
                     <div style="grid-column: 1 / -1;">
                         <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Matricule *</label>
                         <div style="display: flex; gap: 10px;">
-                            <input type="text" id="matricule" required style="flex: 1; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
-                            <button type="button" onclick="generateMatricule()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">Générer</button>
+                            <input type="text" id="matricule" name="matricule" required style="flex: 1; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <button type="button" onclick="window.generateMatricule()" style="padding: 10px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer;">Générer</button>
                         </div>
                     </div>
                     
                     <div>
                         <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Nom *</label>
-                        <input type="text" id="nom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <input type="text" id="nom" name="nom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                     </div>
                     
                     <div>
                         <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Prénom *</label>
-                        <input type="text" id="prenom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <input type="text" id="prenom" name="prenom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                     </div>
                     
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Date de Naissance *</label>
-                        <input type="date" id="dateNaissance" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Date de naissance *</label>
+                        <input type="date" id="dateNaissance" name="dateNaissance" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                     </div>
                     
                     <div>
                         <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Genre *</label>
-                        <select id="genre" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <select id="genre" name="genre" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                             <option value="">Sélectionner</option>
-                            <option value="MASCULIN">Masculin</option>
-                            <option value="FEMININ">Féminin</option>
+                            <option value="M">Masculin</option>
+                            <option value="F">Féminin</option>
                         </select>
                     </div>
                     
-                    <div style="grid-column: 1 / -1;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Lieu de Naissance</label>
-                        <input type="text" id="lieuNaissance" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
-                    </div>
-                    
-                    <div style="grid-column: 1 / -1;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Adresse</label>
-                        <input type="text" id="adresse" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
-                    </div>
-                    
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Téléphone</label>
-                        <input type="tel" id="telephone" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Classe *</label>
+                        <select id="classe" name="classe" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="">Sélectionner une classe</option>
+                            <option value="6A">6ème A</option>
+                            <option value="6B">6ème B</option>
+                            <option value="5A">5ème A</option>
+                            <option value="5B">5ème B</option>
+                            <option value="4">4ème</option>
+                            <option value="3">3ème</option>
+                        </select>
                     </div>
                     
                     <div>
                         <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Email</label>
-                        <input type="email" id="email" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <input type="email" id="email" name="email" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                     </div>
                     
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Classe</label>
-                        <select id="classeId" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
-                            <option value="">Sélectionner une classe</option>
-                        </select>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Téléphone</label>
+                        <input type="tel" id="telephone" name="telephone" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                     </div>
                     
-                    <div style="display: flex; align-items: center; padding-top: 25px;">
-                        <input type="checkbox" id="boursier" style="width: 20px; height: 20px; margin-right: 10px;">
-                        <label for="boursier" style="font-weight: 600; color: #2c3e50; cursor: pointer;">Boursier</label>
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Adresse</label>
+                        <textarea id="adresse" name="adresse" rows="2" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Nom du parent *</label>
+                        <input type="text" id="parentNom" name="parentNom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Téléphone parent *</label>
+                        <input type="tel" id="parentTelephone" name="parentTelephone" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Statut</label>
+                        <select id="statut" name="statut" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="ACTIF">Actif</option>
+                            <option value="INACTIF">Inactif</option>
+                        </select>
                     </div>
                 </div>
                 
@@ -391,8 +405,6 @@
     <script src="js/no-auth-check.js"></script>
     <script src="js/api.js"></script>
     <script src="js/api-integration.js"></script>
-    <script src="js/eleves.js"></script>
-    <script src="js/eleve-form.js"></script>
-    <script src="js/eleves-management.js"></script>
+    <script src="js/eleves-page.js"></script>
 </body>
 </html>

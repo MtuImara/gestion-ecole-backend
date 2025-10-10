@@ -25,21 +25,12 @@ public class StatistiquesController {
     @Autowired
     private ClasseService classeService;
     
-    // Statistiques pour dashboard admin
-    @GetMapping("/eleves/statistiques")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTEUR')")
-    public ResponseEntity<?> getStatistiquesEleves() {
-        Map<String, Object> stats = new HashMap<>();
-        // Utiliser une valeur fixe pour le moment car count() n'existe pas dans le service
-        stats.put("total", 1248); // Valeur exemple
-        stats.put("variation", 12); // Exemple
-        stats.put("variationMois", 8);
-        return ResponseEntity.ok(stats);
-    }
+    // Méthode supprimée - existe déjà dans EleveController
+    // Pour obtenir les statistiques élèves, utiliser : GET /api/eleves/statistiques
     
-    @GetMapping("/paiements/statistiques")
+    @GetMapping("/dashboard/paiements-stats")
     @PreAuthorize("hasAnyRole('ADMIN', 'DIRECTEUR', 'COMPTABLE')")
-    public ResponseEntity<?> getStatistiquesPaiements() {
+    public ResponseEntity<?> getDashboardStatistiquesPaiements() {
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalMois", 42500000);
         stats.put("variationMois", 8.3);
@@ -51,7 +42,7 @@ public class StatistiquesController {
     }
     
     // Statistiques comptable
-    @GetMapping("/paiements/statistiques-comptable")
+    @GetMapping("/dashboard/comptable-stats")
     @PreAuthorize("hasRole('COMPTABLE')")
     public ResponseEntity<?> getStatistiquesComptable() {
         Map<String, Object> stats = new HashMap<>();
@@ -65,7 +56,7 @@ public class StatistiquesController {
         return ResponseEntity.ok(stats);
     }
     
-    @GetMapping("/paiements/statistiques-par-mode")
+    @GetMapping("/dashboard/stats-par-mode-paiement")
     @PreAuthorize("hasRole('COMPTABLE')")
     public ResponseEntity<?> getStatistiquesParMode() {
         List<Map<String, Object>> modes = List.of(
@@ -77,7 +68,7 @@ public class StatistiquesController {
     }
     
     // Statistiques parent
-    @GetMapping("/paiements/parent/{parentId}/situation")
+    @GetMapping("/dashboard/parent/{parentId}/situation-financiere")
     @PreAuthorize("hasRole('PARENT')")
     public ResponseEntity<?> getSituationFinanciere(@PathVariable Long parentId) {
         Map<String, Object> situation = new HashMap<>();
@@ -87,15 +78,10 @@ public class StatistiquesController {
         return ResponseEntity.ok(situation);
     }
     
-    @GetMapping("/eleves/parent/{parentId}")
-    @PreAuthorize("hasRole('PARENT')")
-    public ResponseEntity<?> getEnfantsByParent(@PathVariable Long parentId) {
-        // Retourner la liste des enfants du parent avec pagination
-        Pageable pageable = PageRequest.of(0, 10);
-        return ResponseEntity.ok(eleveService.findAll(pageable).getContent());
-    }
+    // Méthode supprimée - existe déjà dans EleveController
+    // Pour obtenir les enfants d'un parent, utiliser : GET /api/eleves/parent/{parentId}
     
-    @GetMapping("/eleves/parent/{parentId}/performances")
+    @GetMapping("/dashboard/parent/{parentId}/performances-enfants")
     @PreAuthorize("hasRole('PARENT')")
     public ResponseEntity<?> getPerformancesEnfants(@PathVariable Long parentId) {
         List<Map<String, Object>> performances = List.of(
@@ -114,19 +100,17 @@ public class StatistiquesController {
         stats.put("nombreHeures", 18);
         stats.put("totalEleves", 120);
         stats.put("nombreEleves", 30);
-        stats.put("moyenneGenerale", 14.5);
         stats.put("tendance", "↑ 0.5 ce mois");
         stats.put("tauxPresence", 92);
         return ResponseEntity.ok(stats);
     }
     
-    @GetMapping("/enseignants/{enseignantId}/classes")
+    @GetMapping("/dashboard/enseignant/{enseignantId}/classes")
     @PreAuthorize("hasRole('ENSEIGNANT')")
     public ResponseEntity<?> getClassesEnseignant(@PathVariable Long enseignantId) {
         List<Map<String, Object>> classes = List.of(
-            Map.of("id", 1, "nom", "6ème A", "nombreEleves", 30, "moyenne", 14.5),
-            Map.of("id", 2, "nom", "5ème B", "nombreEleves", 28, "moyenne", 15.2),
-            Map.of("id", 3, "nom", "4ème C", "nombreEleves", 32, "moyenne", 13.8),
+            Map.of("id", 1, "nom", "6ème A", "nombreEle-ves", 30, "moyenne", 14.5),
+            Map.of("id", 2, "nom", "5ème B", "nombreEle-ves", 28, "moyenne", 15.2),
             Map.of("id", 4, "nom", "3ème A", "nombreEleves", 30, "moyenne", 14.9)
         );
         return ResponseEntity.ok(classes);

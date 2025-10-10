@@ -145,11 +145,19 @@ public class GlobalExceptionHandler {
         
         log.error("Erreur système : ", ex);
         
+        // En mode debug, afficher le message d'erreur réel
+        String message = "Une erreur système s'est produite. Veuillez contacter l'administrateur.";
+        
+        // TEMPORAIRE: Afficher l'erreur réelle pour debug
+        message = String.format("Erreur: %s - %s", 
+            ex.getClass().getSimpleName(), 
+            ex.getMessage() != null ? ex.getMessage() : "Pas de message");
+        
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error("System Error")
-                .message("Une erreur système s'est produite. Veuillez contacter l'administrateur.")
+                .message(message)
                 .path(request.getDescription(false).replace("uri=", ""))
                 .build();
         
