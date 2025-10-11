@@ -46,12 +46,23 @@ public class PaiementController {
         return ResponseEntity.ok(updated);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Obtenir un paiement", description = "Récupère un paiement par son ID")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE', 'PARENT')")
-    public ResponseEntity<PaiementDTO> findById(@PathVariable Long id) {
-        PaiementDTO paiement = paiementService.findById(id);
-        return ResponseEntity.ok(paiement);
+    // IMPORTANT: Les endpoints avec des chemins fixes doivent être AVANT les endpoints avec {id}
+    @GetMapping("/generate-numero")
+    @Operation(summary = "Générer un numéro de paiement", description = "Génère un nouveau numéro de paiement unique")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE')")
+    public ResponseEntity<Map<String, String>> generateNumero() {
+        String numero = paiementService.generateNumeroPaiement();
+        return ResponseEntity.ok(Map.of("numeroPaiement", numero));
+    }
+
+    @GetMapping("/statistiques/periode")
+    @Operation(summary = "Statistiques par période", description = "Calcule le total des paiements sur une période")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE')")
+    public ResponseEntity<Map<String, BigDecimal>> getStatistiquesPeriode(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateDebut,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFin) {
+        BigDecimal total = paiementService.getTotalPaiementsByPeriode(dateDebut, dateFin);
+        return ResponseEntity.ok(Map.of("totalPaiements", total));
     }
 
     @GetMapping("/numero/{numeroPaiement}")
@@ -96,6 +107,30 @@ public class PaiementController {
         return ResponseEntity.ok(paiements);
     }
 
+    // IMPORTANT: Les endpoints avec {id} doivent être APRÈS tous les autres endpoints GET
+    @GetMapping("/{id}/recu")
+    @Operation(summary = "Télécharger le reçu", description = "Génère et télécharge le reçu de paiement")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE', 'PARENT')")
+    public ResponseEntity<byte[]> genererRecu(@PathVariable Long id) {
+        byte[] recu = paiementService.genererRecu(id);
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "recu_" + id + ".pdf");
+        
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(recu);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtenir un paiement", description = "Récupère un paiement par son ID")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE', 'PARENT')")
+    public ResponseEntity<PaiementDTO> findById(@PathVariable Long id) {
+        PaiementDTO paiement = paiementService.findById(id);
+        return ResponseEntity.ok(paiement);
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Supprimer un paiement", description = "Supprime un paiement")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -120,38 +155,7 @@ public class PaiementController {
         return ResponseEntity.ok(paiement);
     }
 
-    @GetMapping("/{id}/recu")
-    @Operation(summary = "Télécharger le reçu", description = "Génère et télécharge le reçu de paiement")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE', 'PARENT')")
-    public ResponseEntity<byte[]> genererRecu(@PathVariable Long id) {
-        byte[] recu = paiementService.genererRecu(id);
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "recu_" + id + ".pdf");
-        
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(recu);
-    }
-
-    @GetMapping("/generate-numero")
-    @Operation(summary = "Générer un numéro de paiement", description = "Génère un nouveau numéro de paiement unique")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE')")
-    public ResponseEntity<Map<String, String>> generateNumero() {
-        String numero = paiementService.generateNumeroPaiement();
-        return ResponseEntity.ok(Map.of("numeroPaiement", numero));
-    }
-
-    @GetMapping("/statistiques/periode")
-    @Operation(summary = "Statistiques par période", description = "Calcule le total des paiements sur une période")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'COMPTABLE')")
-    public ResponseEntity<Map<String, BigDecimal>> getStatistiquesPeriode(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateDebut,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFin) {
-        BigDecimal total = paiementService.getTotalPaiementsByPeriode(dateDebut, dateFin);
-        return ResponseEntity.ok(Map.of("totalPaiements", total));
-    }
+    // Les méthodes ont été déplacées plus haut dans le fichier
     
     @GetMapping("/recus/mes-recus")
     @Operation(summary = "Mes reçus", description = "Récupère les reçus de l'élève connecté")

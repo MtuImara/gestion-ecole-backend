@@ -20,6 +20,15 @@ import java.util.Set;
 @AllArgsConstructor
 public class Parent extends Utilisateur {
 
+    @Column(name = "nom", length = 100)
+    private String nom;
+    
+    @Column(name = "prenom", length = 100)
+    private String prenom;
+    
+    @Column(name = "adresse", length = 255)
+    private String adresse;
+
     @Column(name = "numero_parent", unique = true, length = 50)
     private String numeroParent;
 
@@ -60,6 +69,30 @@ public class Parent extends Utilisateur {
     }
     
     // Getters et Setters manuels pour contourner le problème Lombok
+    public String getNom() {
+        return nom;
+    }
+    
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+    
+    public String getPrenom() {
+        return prenom;
+    }
+    
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+    
+    public String getAdresse() {
+        return adresse;
+    }
+    
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+    
     public String getNumeroParent() {
         return numeroParent;
     }
@@ -76,6 +109,22 @@ public class Parent extends Utilisateur {
         this.profession = profession;
     }
     
+    public String getEmployeur() {
+        return employeur;
+    }
+    
+    public void setEmployeur(String employeur) {
+        this.employeur = employeur;
+    }
+    
+    public String getAdresseTravail() {
+        return adresseTravail;
+    }
+    
+    public void setAdresseTravail(String adresseTravail) {
+        this.adresseTravail = adresseTravail;
+    }
+    
     public TypeParent getTypeParent() {
         return typeParent;
     }
@@ -90,5 +139,21 @@ public class Parent extends Utilisateur {
     
     public void setCin(String cin) {
         this.cin = cin;
+    }
+    
+    public String getNumeroPasseport() {
+        return numeroPasseport;
+    }
+    
+    public void setNumeroPasseport(String numeroPasseport) {
+        this.numeroPasseport = numeroPasseport;
+    }
+    
+    public Set<Eleve> getEnfants() {
+        return enfants;
+    }
+    
+    public void setEnfants(Set<Eleve> enfants) {
+        this.enfants = enfants;
     }
 }

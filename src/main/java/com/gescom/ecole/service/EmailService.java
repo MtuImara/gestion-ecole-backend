@@ -14,6 +14,16 @@ public interface EmailService {
     
     /**
      * Envoie le reçu de paiement par email
+     * @deprecated Utiliser sendRecuEmail à la place pour éviter la dépendance circulaire
      */
+    @Deprecated
     void envoyerRecuParEmail(String emailDestinataire, Long paiementId);
+    
+    /**
+     * Envoie le reçu de paiement par email avec le PDF déjà généré
+     * @param emailDestinataire Email du destinataire
+     * @param recuPdf Le PDF du reçu déjà généré
+     * @param paiementId L'ID du paiement pour le nom du fichier
+     */
+    void sendRecuEmail(String emailDestinataire, byte[] recuPdf, Long paiementId);
 }

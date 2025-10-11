@@ -1,7 +1,6 @@
 package com.gescom.ecole.service.impl;
 
 import com.gescom.ecole.service.EmailService;
-import com.gescom.ecole.service.PaiementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +18,6 @@ import jakarta.mail.internet.MimeMessage;
 public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
-    private final PaiementService paiementService;
     
     @Value("${spring.mail.username:noreply@ecolegest.com}")
     private String fromEmail;
@@ -65,23 +63,26 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void envoyerRecuParEmail(String emailDestinataire, Long paiementId) {
+        // Cette méthode est maintenant dépréciée - utiliser sendRecuEmail à la place
+        log.warn("Méthode envoyerRecuParEmail dépréciée - utiliser sendRecuEmail");
+        throw new UnsupportedOperationException("Utiliser sendRecuEmail(email, recuPdf, paiementId) à la place");
+    }
+    
+    @Override
+    public void sendRecuEmail(String emailDestinataire, byte[] recuPdf, Long paiementId) {
         try {
-            // Récupérer le PDF du reçu
-            byte[] recuPdf = paiementService.genererRecu(paiementId);
-            
             String subject = "Reçu de Paiement - EcoleGest";
             String text = "Bonjour,\n\n" +
                          "Veuillez trouver ci-joint votre reçu de paiement.\n\n" +
-                         "Vous pouvez également le consulter en vous connectant à votre espace.\n\n" +
                          "Cordialement,\n" +
                          "L'équipe EcoleGest";
             
-            String filename = "recu-paiement-" + paiementId + ".pdf";
-            
+            String filename = String.format("recu_paiement_%d.pdf", paiementId);
             sendEmailWithAttachment(emailDestinataire, subject, text, recuPdf, filename);
-            log.info("Reçu PDF envoyé par email pour paiement ID: {}", paiementId);
+            
+            log.info("Reçu de paiement {} envoyé par email à: {}", paiementId, emailDestinataire);
         } catch (Exception e) {
-            log.error("Erreur lors de l'envoi du reçu par email pour paiement ID: {}", paiementId, e);
+            log.error("Erreur lors de l'envoi du reçu {} par email à: {}", paiementId, emailDestinataire, e);
             throw new RuntimeException("Erreur envoi reçu par email", e);
         }
     }

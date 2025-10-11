@@ -173,6 +173,10 @@
                 <span class="menu-icon">👨‍🎓</span>
                 <span class="menu-text">Élèves</span>
             </div>
+            <div class="menu-item" onclick="window.location.href='/parents.html'">
+                <span class="menu-icon">👨‍👩‍👧</span>
+                <span class="menu-text">Parents</span>
+            </div>
             <div class="menu-item" onclick="window.location.href='/paiements.html'">
                 <span class="menu-icon">💰</span>
                 <span class="menu-text">Paiements</span>
@@ -312,7 +316,16 @@
             </div>
             
             <form id="eleveForm" onsubmit="submitForm(event)">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <!-- Tabs pour organiser les champs -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0;">
+                    <button type="button" onclick="switchTab('info')" id="tabInfo" style="padding: 10px 20px; background: none; border: none; border-bottom: 3px solid #667eea; color: #667eea; font-weight: 600; cursor: pointer;">Informations personnelles</button>
+                    <button type="button" onclick="switchTab('medical')" id="tabMedical" style="padding: 10px 20px; background: none; border: none; color: #7f8c8d; font-weight: 600; cursor: pointer;">Médical</button>
+                    <button type="button" onclick="switchTab('financial')" id="tabFinancial" style="padding: 10px 20px; background: none; border: none; color: #7f8c8d; font-weight: 600; cursor: pointer;">Financier</button>
+                    <button type="button" onclick="switchTab('parent')" id="tabParent" style="padding: 10px 20px; background: none; border: none; color: #7f8c8d; font-weight: 600; cursor: pointer;">Parents</button>
+                </div>
+                
+                <!-- Tab Informations personnelles -->
+                <div id="tabContentInfo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div style="grid-column: 1 / -1;">
                         <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Matricule *</label>
                         <div style="display: flex; gap: 10px;">
@@ -332,8 +345,18 @@
                     </div>
                     
                     <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Deuxième prénom</label>
+                        <input type="text" id="deuxiemePrenom" name="deuxiemePrenom" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
                         <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Date de naissance *</label>
                         <input type="date" id="dateNaissance" name="dateNaissance" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Lieu de naissance</label>
+                        <input type="text" id="lieuNaissance" name="lieuNaissance" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                     </div>
                     
                     <div>
@@ -346,16 +369,25 @@
                     </div>
                     
                     <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Nationalité</label>
+                        <input type="text" id="nationalite" name="nationalite" placeholder="Burundaise" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Date d'inscription *</label>
+                        <input type="date" id="dateInscription" name="dateInscription" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
                         <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Classe *</label>
                         <select id="classe" name="classe" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                             <option value="">Sélectionner une classe</option>
-                            <option value="6A">6ème A</option>
-                            <option value="6B">6ème B</option>
-                            <option value="5A">5ème A</option>
-                            <option value="5B">5ème B</option>
-                            <option value="4">4ème</option>
-                            <option value="3">3ème</option>
                         </select>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">École de provenance</label>
+                        <input type="text" id="ecoleProvenance" name="ecoleProvenance" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                     </div>
                     
                     <div>
@@ -368,19 +400,19 @@
                         <input type="tel" id="telephone" name="telephone" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                     </div>
                     
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Numéro d'urgence</label>
+                        <input type="tel" id="numeroUrgence" name="numeroUrgence" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
                     <div style="grid-column: 1 / -1;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Adresse</label>
-                        <textarea id="adresse" name="adresse" rows="2" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;"></textarea>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Adresse domicile</label>
+                        <textarea id="adresseDomicile" name="adresseDomicile" rows="2" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;"></textarea>
                     </div>
                     
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Nom du parent *</label>
-                        <input type="text" id="parentNom" name="parentNom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
-                    </div>
-                    
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Téléphone parent *</label>
-                        <input type="tel" id="parentTelephone" name="parentTelephone" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Quartier</label>
+                        <input type="text" id="quartier" name="quartier" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
                     </div>
                     
                     <div>
@@ -392,6 +424,85 @@
                     </div>
                 </div>
                 
+                <!-- Tab Médical -->
+                <div id="tabContentMedical" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Groupe sanguin</label>
+                        <select id="groupeSanguin" name="groupeSanguin" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="">Sélectionner</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                    
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Allergies</label>
+                        <textarea id="allergies" name="allergies" rows="3" placeholder="Liste des allergies connues..." style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;"></textarea>
+                    </div>
+                    
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Maladies chroniques</label>
+                        <textarea id="maladiesChroniques" name="maladiesChroniques" rows="3" placeholder="Liste des maladies chroniques..." style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Tab Financier -->
+                <div id="tabContentFinancial" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Boursier</label>
+                        <select id="boursier" name="boursier" onchange="toggleBoursePercentage()" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="false">Non</option>
+                            <option value="true">Oui</option>
+                        </select>
+                    </div>
+                    
+                    <div id="pourcentageBourseDiv" style="display: none;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Pourcentage de bourse (%)</label>
+                        <input type="number" id="pourcentageBourse" name="pourcentageBourse" min="0" max="100" step="5" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+                
+                <!-- Tab Parents -->
+                <div id="tabContentParent" style="display: none; grid-template-columns: 1fr; gap: 15px;">
+                    <div>
+                        <h3 style="margin: 0 0 15px 0; color: #2c3e50;">Parents/Tuteurs de l'élève</h3>
+                        <p style="color: #7f8c8d; margin-bottom: 15px;">Sélectionnez les parents existants ou créez-en de nouveaux</p>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Sélectionner les parents *</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <select id="parentSelect" multiple style="flex: 1; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; min-height: 120px;">
+                                <!-- Options chargées dynamiquement -->
+                            </select>
+                            <div style="display: flex; flex-direction: column; gap: 5px;">
+                                <button type="button" onclick="window.location.href='/parents.html'" style="padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                                    ➕ Gérer les parents
+                                </button>
+                                <button type="button" onclick="refreshParentsList()" style="padding: 8px 12px; background: #f0f0f0; color: #2c3e50; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                                    🔄 Actualiser
+                                </button>
+                            </div>
+                        </div>
+                        <small style="color: #7f8c8d; display: block; margin-top: 5px;">
+                            Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs parents
+                        </small>
+                    </div>
+                    
+                    <div id="selectedParentsDisplay" style="margin-top: 15px;">
+                        <h4 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 14px;">Parents sélectionnés :</h4>
+                        <div id="selectedParentsList" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <!-- Affichage dynamique des parents sélectionnés -->
+                        </div>
+                    </div>
+                </div>
+                
                 <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
                     <button type="button" onclick="closeModal()" style="padding: 12px 24px; background: #f0f0f0; color: #2c3e50; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Annuler</button>
                     <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Enregistrer</button>
@@ -400,11 +511,215 @@
         </div>
     </div>
 
-    <!-- Protection contre les redirections - DOIT être chargé EN PREMIER -->
-    <script src="js/no-redirect.js"></script>
-    <script src="js/no-auth-check.js"></script>
+    <!-- Scripts avec authentification -->
+    <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script src="js/api-integration.js"></script>
     <script src="js/eleves-page.js"></script>
+    
+    <!-- Script pour gérer les tabs du modal -->
+    <script>
+        // Fonction pour changer de tab
+        function switchTab(tabName) {
+            // Cacher tous les contenus
+            document.getElementById('tabContentInfo').style.display = 'none';
+            document.getElementById('tabContentMedical').style.display = 'none';
+            document.getElementById('tabContentFinancial').style.display = 'none';
+            document.getElementById('tabContentParent').style.display = 'none';
+            
+            // Réinitialiser tous les boutons
+            document.getElementById('tabInfo').style.borderBottom = 'none';
+            document.getElementById('tabInfo').style.color = '#7f8c8d';
+            document.getElementById('tabMedical').style.borderBottom = 'none';
+            document.getElementById('tabMedical').style.color = '#7f8c8d';
+            document.getElementById('tabFinancial').style.borderBottom = 'none';
+            document.getElementById('tabFinancial').style.color = '#7f8c8d';
+            document.getElementById('tabParent').style.borderBottom = 'none';
+            document.getElementById('tabParent').style.color = '#7f8c8d';
+            
+            // Afficher le contenu sélectionné et activer le bouton
+            if (tabName === 'info') {
+                document.getElementById('tabContentInfo').style.display = 'grid';
+                document.getElementById('tabInfo').style.borderBottom = '3px solid #667eea';
+                document.getElementById('tabInfo').style.color = '#667eea';
+            } else if (tabName === 'medical') {
+                document.getElementById('tabContentMedical').style.display = 'grid';
+                document.getElementById('tabMedical').style.borderBottom = '3px solid #667eea';
+                document.getElementById('tabMedical').style.color = '#667eea';
+            } else if (tabName === 'financial') {
+                document.getElementById('tabContentFinancial').style.display = 'grid';
+                document.getElementById('tabFinancial').style.borderBottom = '3px solid #667eea';
+                document.getElementById('tabFinancial').style.color = '#667eea';
+            } else if (tabName === 'parent') {
+                document.getElementById('tabContentParent').style.display = 'grid';
+                document.getElementById('tabParent').style.borderBottom = '3px solid #667eea';
+                document.getElementById('tabParent').style.color = '#667eea';
+            }
+        }
+        
+        // Fonction pour afficher/cacher le pourcentage de bourse
+        function toggleBoursePercentage() {
+            const boursier = document.getElementById('boursier').value;
+            const pourcentageDiv = document.getElementById('pourcentageBourseDiv');
+            
+            if (boursier === 'true') {
+                pourcentageDiv.style.display = 'block';
+            } else {
+                pourcentageDiv.style.display = 'none';
+                document.getElementById('pourcentageBourse').value = '';
+            }
+        }
+        
+        // Définir la date d'inscription par défaut à aujourd'hui
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInscription = document.getElementById('dateInscription');
+            if (dateInscription && !dateInscription.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInscription.value = today;
+            }
+            
+            // Charger la liste des parents
+            loadParentsList();
+            
+            // Écouter les changements de sélection des parents
+            const parentSelect = document.getElementById('parentSelect');
+            if (parentSelect) {
+                parentSelect.addEventListener('change', updateSelectedParentsDisplay);
+            }
+        });
+        
+        // Charger la liste des parents
+        async function loadParentsList() {
+            try {
+                // Charger depuis l'API backend
+                const parents = await ParentAPI.getAllNoPagination();
+                
+                // Remplir le select
+                const parentSelect = document.getElementById('parentSelect');
+                if (parentSelect) {
+                    parentSelect.innerHTML = '';
+                    parents.forEach(parent => {
+                        const option = document.createElement('option');
+                        option.value = parent.id;
+                        const typeParent = parent.typeParent || parent.lienParente || 'PARENT';
+                        option.textContent = `${parent.prenom} ${parent.nom} - ${getParentRelationLabel(typeParent)} (${parent.telephone})`;
+                        parentSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des parents:', error);
+                // Si l'API échoue, utiliser des données de test
+                const parents = [
+                    { id: 1, nom: 'NIYONGABO', prenom: 'Jean', lienParente: 'PERE', telephone: '+257 79 123 456' },
+                    { id: 2, nom: 'NDAYISHIMIYE', prenom: 'Jeanne', lienParente: 'MERE', telephone: '+257 79 234 567' },
+                    { id: 3, nom: 'HAKIZIMANA', prenom: 'Pierre', lienParente: 'TUTEUR', telephone: '+257 79 345 678' }
+                ];
+                
+                const parentSelect = document.getElementById('parentSelect');
+                if (parentSelect) {
+                    parentSelect.innerHTML = '';
+                    parents.forEach(parent => {
+                        const option = document.createElement('option');
+                        option.value = parent.id;
+                        option.textContent = `${parent.prenom} ${parent.nom} - ${getParentRelationLabel(parent.lienParente)} (${parent.telephone})`;
+                        parentSelect.appendChild(option);
+                    });
+                }
+            }
+        }
+        
+        // Actualiser la liste des parents
+        function refreshParentsList() {
+            loadParentsList();
+            showNotification('Liste des parents actualisée', 'success');
+        }
+        
+        // Mettre à jour l'affichage des parents sélectionnés
+        function updateSelectedParentsDisplay() {
+            const parentSelect = document.getElementById('parentSelect');
+            const selectedParentsList = document.getElementById('selectedParentsList');
+            
+            if (!parentSelect || !selectedParentsList) return;
+            
+            const selectedOptions = Array.from(parentSelect.selectedOptions);
+            
+            if (selectedOptions.length === 0) {
+                selectedParentsList.innerHTML = '<span style="color: #7f8c8d;">Aucun parent sélectionné</span>';
+            } else {
+                selectedParentsList.innerHTML = selectedOptions.map(option => `
+                    <span style="
+                        padding: 5px 12px;
+                        background: #f0f4ff;
+                        border-radius: 20px;
+                        font-size: 13px;
+                        color: #667eea;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 5px;
+                    ">
+                        ${option.textContent.split(' - ')[0]}
+                        <button type="button" onclick="deselectParent(${option.value})" style="
+                            background: none;
+                            border: none;
+                            color: #667eea;
+                            cursor: pointer;
+                            font-size: 16px;
+                            padding: 0;
+                            margin-left: 5px;
+                        ">×</button>
+                    </span>
+                `).join('');
+            }
+        }
+        
+        // Désélectionner un parent
+        function deselectParent(parentId) {
+            const parentSelect = document.getElementById('parentSelect');
+            if (parentSelect) {
+                const options = Array.from(parentSelect.options);
+                options.forEach(option => {
+                    if (option.value == parentId) {
+                        option.selected = false;
+                    }
+                });
+                updateSelectedParentsDisplay();
+            }
+        }
+        
+        // Obtenir le label de la relation parent
+        function getParentRelationLabel(relation) {
+            const relations = {
+                'PERE': 'Père',
+                'MERE': 'Mère',
+                'TUTEUR': 'Tuteur',
+                'AUTRE': 'Autre'
+            };
+            return relations[relation] || relation;
+        }
+        
+        // Afficher une notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

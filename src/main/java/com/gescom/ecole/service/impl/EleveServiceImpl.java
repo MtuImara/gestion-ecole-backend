@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -49,6 +50,14 @@ public class EleveServiceImpl implements EleveService {
         Eleve eleve = eleveMapper.toEntity(eleveDTO);
         eleve.setStatut(StatutEleve.ACTIF);
         eleve.setDateInscription(LocalDate.now());
+        
+        // Initialiser les valeurs par défaut pour les champs non-null
+        if (eleve.getBoursier() == null) {
+            eleve.setBoursier(false);
+        }
+        if (eleve.getPourcentageBourse() == null) {
+            eleve.setPourcentageBourse(BigDecimal.ZERO);
+        }
         
         // Gérer la classe si fournie
         if (eleveDTO.getClasse() != null) {

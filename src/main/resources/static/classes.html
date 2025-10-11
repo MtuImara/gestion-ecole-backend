@@ -29,6 +29,10 @@
                 <span class="menu-icon">👨‍🎓</span>
                 <span class="menu-text">Élèves</span>
             </div>
+            <div class="menu-item" onclick="window.location.href='/parents.html'">
+                <span class="menu-icon">👨‍👩‍👧</span>
+                <span class="menu-text">Parents</span>
+            </div>
             <div class="menu-item" onclick="window.location.href='/paiements.html'">
                 <span class="menu-icon">💰</span>
                 <span class="menu-text">Paiements</span>
@@ -162,10 +166,8 @@
                 </div>
             </form>
         </div>
-    <!-- Protection contre les redirections - DOIT être chargé EN PREMIER -->
-    <script src="js/no-redirect.js"></script>
-    <script src="js/no-auth-check.js"></script>
-    <script src="js/api.js"></script>
+    <!-- Scripts avec authentification -->
+    <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script src="js/classes.js"></script>
     <script src="js/classes-module.js"></script>

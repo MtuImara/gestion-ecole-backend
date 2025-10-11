@@ -13,6 +13,118 @@
     <script src="js/cache-buster.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/table-common.css">
+    <style>
+        .parent-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .parent-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        
+        .parent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .parent-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .parent-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .parent-details h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        
+        .parent-details p {
+            margin: 5px 0 0 0;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .parent-contacts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .parent-children {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 15px;
+        }
+        
+        .children-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .child-badge {
+            padding: 5px 12px;
+            background: #f0f4ff;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #667eea;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit { background: #fff3e0; color: #ff9800; }
+        .btn-delete { background: #ffebee; color: #f44336; }
+        .btn-view { background: #e3f2fd; color: #2196f3; }
+        
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -48,21 +160,17 @@
         </div>
 
         <div class="main-content">
-            <div class="header">
-                <div>
+            <div class="container">
+                <!-- Header -->
+                <div class="page-header">
                     <h1>Gestion des Parents</h1>
-                    <p style="color: #7f8c8d; margin-top: 5px;">Liste des parents d'élèves</p>
-                </div>
-            </div>
-
-            <div class="stats-grid" style="margin-bottom: 20px;">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-label">Total Parents</div>
-                            <div class="stat-value" id="totalParents">-</div>
-                        </div>
-                        <div class="stat-icon blue">👨‍👩‍👧</div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="testLogin()" class="btn-secondary" style="background: #28a745;">
+                            🔐 Test Login Admin
+                        </button>
+                        <button onclick="openParentModal()" class="btn-primary">
+                            ➕ Nouveau Parent
+                        </button>
                     </div>
                 </div>
             </div>
@@ -72,7 +180,7 @@
                     <div class="search-filter">
                         <input type="text" class="search-input-table" id="searchInput" placeholder="Rechercher un parent...">
                     </div>
-                    <button class="btn-add" onclick="alert('Ajout à venir')">➕ Nouveau Parent</button>
+                    <button class="btn-add" onclick="openParentModal()">➕ Nouveau Parent</button>
                 </div>
 
                 <div id="tableContent">
@@ -81,21 +189,114 @@
                         <p>Chargement...</p>
                     </div>
                 </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Protection contre les redirections -->
-    <script src="js/no-redirect.js"></script>
+    <!-- Modal Parent -->
+    <div id="parentModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 id="modalTitle" style="margin: 0; color: #2c3e50;">Nouveau Parent</h2>
+                <button onclick="closeParentModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d;">×</button>
+            </div>
+            
+            <form id="parentForm" onsubmit="submitParentForm(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Nom *</label>
+                        <input type="text" id="nom" name="nom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Prénom *</label>
+                        <input type="text" id="prenom" name="prenom" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Type de relation *</label>
+                        <select id="lienParente" name="lienParente" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="">Sélectionner</option>
+                            <option value="PERE">Père</option>
+                            <option value="MERE">Mère</option>
+                            <option value="TUTEUR">Tuteur</option>
+                            <option value="AUTRE">Autre</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Téléphone principal *</label>
+                        <input type="tel" id="telephone" name="telephone" required style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Email</label>
+                        <input type="email" id="email" name="email" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Profession</label>
+                        <input type="text" id="profession" name="profession" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Adresse complète</label>
+                        <textarea id="adresse" name="adresse" rows="2" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">CIN/Passeport</label>
+                        <input type="text" id="cin" name="cin" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2c3e50;">Téléphone secondaire</label>
+                        <input type="tel" id="telephoneSecondaire" name="telephoneSecondaire" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
+                    <button type="button" onclick="closeParentModal()" style="padding: 12px 24px; background: #f0f0f0; color: #2c3e50; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Annuler</button>
+                    <button type="submit" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts dans le bon ordre - Avec authentification -->
+    <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/parents.js"></script>
-    <script src="js/parents-module.js"></script>
-</body>
-</html>
+    <script src="js/parents-page.js"></script>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('logoutBtn').addEventListener('click', () => AuthService.logout());
-            document.getElementById('tableContent').innerHTML = '<div class="empty-state">Fonctionnalité en cours de développement</div>';
-            document.getElementById('totalParents').textContent = '0';
-        });
+        // Fonction de test pour se connecter rapidement
+        async function testLogin() {
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'Admin@2024'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('ecolegest_token', data.token);
+                    localStorage.setItem('ecolegest_user', JSON.stringify(data.user));
+                    alert('Connexion réussie ! Token stocké.');
+                    window.location.reload();
+                } else {
+                    alert('Échec de connexion. Vérifiez les identifiants.');
+                }
+            } catch (error) {
+                console.error('Erreur de connexion:', error);
+                alert('Erreur de connexion: ' + error.message);
+            }
+        }
     </script>
 </body>
 </html>

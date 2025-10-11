@@ -91,7 +91,7 @@ public class Eleve extends BaseEntity {
     private Boolean boursier = false;
 
     @Column(name = "pourcentage_bourse", precision = 5, scale = 2)
-    private BigDecimal pourcentageBourse;
+    private BigDecimal pourcentageBourse = BigDecimal.ZERO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classe_id")

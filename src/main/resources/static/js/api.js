@@ -156,94 +156,160 @@ async function apiCall(endpoint, options = {}) {
 // API des Élèves
 const EleveAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/eleves?page=${page}&size=${size}`);
+        return apiCall(`/api/eleves?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/eleves/${id}`);
+        return apiCall(`/api/eleves/${id}`);
     },
     
     async create(eleve) {
-        return apiCall('/eleves', {
+        return apiCall('/api/eleves', {
             method: 'POST',
             body: JSON.stringify(eleve)
         });
     },
     
     async update(id, eleve) {
-        return apiCall(`/eleves/${id}`, {
+        return apiCall(`/api/eleves/${id}`, {
             method: 'PUT',
             body: JSON.stringify(eleve)
         });
     },
     
     async delete(id) {
-        return apiCall(`/eleves/${id}`, {
+        return apiCall(`/api/eleves/${id}`, {
             method: 'DELETE'
         });
     },
     
     async search(query) {
-        return apiCall(`/eleves/search?query=${encodeURIComponent(query)}`);
+        return apiCall(`/api/eleves/search?query=${encodeURIComponent(query)}`);
     },
     
     async getStatistiques() {
-        return apiCall('/eleves/statistiques');
+        return apiCall('/api/eleves/statistiques');
     },
     
-    async generateMatricule() {
-        return apiCall('/eleves/generate-matricule');
+    async getByClasse(classeId) {
+        return apiCall(`/api/eleves/classe/${classeId}`);
     },
     
-    async filter(classeId, anneeScolaireId, statut, page = 0, size = 10) {
-        let url = `/eleves/filter?page=${page}&size=${size}`;
-        if (classeId) url += `&classeId=${classeId}`;
-        if (anneeScolaireId) url += `&anneeScolaireId=${anneeScolaireId}`;
-        if (statut) url += `&statut=${statut}`;
-        return apiCall(url);
-    },
-    
-    // Méthodes pour le dashboard parent
     async getByParent(parentId) {
-        return apiCall(`/eleves/parent/${parentId}`);
+        return apiCall(`/api/eleves/parent/${parentId}`);
+    }
+};
+
+// API des Parents
+const ParentAPI = {
+    async getAll(page = 0, size = 10) {
+        return apiCall(`/api/parents?page=${page}&size=${size}`);
     },
     
-    async getPerformances(parentId) {
-        return apiCall(`/eleves/parent/${parentId}/performances`);
+    async getAllNoPagination() {
+        return apiCall('/api/parents/all');
+    },
+    
+    async getById(id) {
+        return apiCall(`/api/parents/${id}`);
+    },
+    
+    async create(parent) {
+        return apiCall('/api/parents', {
+            method: 'POST',
+            body: JSON.stringify(parent)
+        });
+    },
+    
+    async update(id, parent) {
+        return apiCall(`/api/parents/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(parent)
+        });
+    },
+    
+    async delete(id) {
+        return apiCall(`/api/parents/${id}`, {
+            method: 'DELETE'
+        });
+    },
+    
+    async search(query) {
+        return apiCall(`/api/parents/search?search=${encodeURIComponent(query)}`);
+    },
+    
+    async getByType(typeParent) {
+        return apiCall(`/api/parents/type/${typeParent}`);
+    },
+    
+    async getByEleveId(eleveId) {
+        return apiCall(`/api/parents/eleve/${eleveId}`);
+    },
+    
+    async addEnfant(parentId, eleveId) {
+        return apiCall(`/api/parents/${parentId}/enfants/${eleveId}`, {
+            method: 'POST'
+        });
+    },
+    
+    async removeEnfant(parentId, eleveId) {
+        return apiCall(`/api/parents/${parentId}/enfants/${eleveId}`, {
+            method: 'DELETE'
+        });
+    },
+    
+    async checkEmailExists(email) {
+        return apiCall(`/api/parents/exists/email/${encodeURIComponent(email)}`);
+    },
+    
+    async checkCinExists(cin) {
+        return apiCall(`/api/parents/exists/cin/${encodeURIComponent(cin)}`);
+    },
+    
+    async getCount() {
+        return apiCall('/api/parents/count');
+    },
+    
+    async generateNumero() {
+        return apiCall('/api/parents/generate-numero');
+    },
+    
+    async getSituationFinanciere(parentId) {
+        return apiCall(`/api/parents/${parentId}/situation-financiere`);
     }
 };
 
 // API des Paiements
 const PaiementAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/paiements?page=${page}&size=${size}`);
+        return apiCall(`/api/paiements?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/paiements/${id}`);
+        return apiCall(`/api/paiements/${id}`);
     },
     
     async create(paiement) {
-        return apiCall('/paiements', {
+        return apiCall('/api/paiements', {
             method: 'POST',
             body: JSON.stringify(paiement)
         });
     },
     
     async getByEleve(eleveId) {
-        return apiCall(`/paiements/eleve/${eleveId}`);
+        return apiCall(`/api/paiements/eleve/${eleveId}`);
     },
     
     async getStatistiques() {
-        return apiCall('/paiements/statistiques');
+        return apiCall('/api/paiements/statistiques');
     },
     
     async getRecents(limit = 10) {
-        return apiCall(`/paiements/recents?limit=${limit}`);
+        return apiCall(`/api/paiements/recents?limit=${limit}`);
     },
     
     async telechargerRecu(paiementId) {
-        const response = await fetch(`${API_BASE_URL}/paiements/${paiementId}/recu`, {
+        const response = await fetch(`${API_BASE_URL}/api/paiements/${paiementId}/recu`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${AuthService.getToken()}`
@@ -254,214 +320,214 @@ const PaiementAPI = {
     },
     
     async validerPaiement(paiementId) {
-        return apiCall(`/paiements/${paiementId}/valider`, {
+        return apiCall(`/api/paiements/${paiementId}/valider`, {
             method: 'POST'
         });
     },
     
     async annulerPaiement(paiementId) {
-        return apiCall(`/paiements/${paiementId}/annuler`, {
+        return apiCall(`/api/paiements/${paiementId}/annuler`, {
             method: 'POST'
         });
     },
     
     async getPaiementsEnAttente(page = 0, size = 20) {
-        return apiCall(`/paiements/en-attente?page=${page}&size=${size}`);
+        return apiCall(`/api/paiements/en-attente?page=${page}&size=${size}`);
     },
     
     // Méthodes pour dashboards
     async getSituationFinanciere(parentId) {
-        return apiCall(`/paiements/parent/${parentId}/situation`);
+        return apiCall(`/api/paiements/parent/${parentId}/situation`);
     },
     
     async getStatistiquesComptable() {
-        return apiCall('/paiements/statistiques-comptable');
+        return apiCall('/api/paiements/statistiques-comptable');
     },
     
     async getStatistiquesParMode() {
-        return apiCall('/paiements/statistiques-par-mode');
+        return apiCall('/api/paiements/statistiques-par-mode');
     }
 };
 
 // API des Dérogations
 const DerogationAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/derogations?page=${page}&size=${size}`);
+        return apiCall(`/api/derogations?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/derogations/${id}`);
+        return apiCall(`/api/derogations/${id}`);
     },
     
     async create(derogation) {
-        return apiCall('/derogations', {
+        return apiCall('/api/derogations', {
             method: 'POST',
             body: JSON.stringify(derogation)
         });
     },
     
     async update(id, derogation) {
-        return apiCall(`/derogations/${id}`, {
+        return apiCall(`/api/derogations/${id}`, {
             method: 'PUT',
             body: JSON.stringify(derogation)
         });
     },
     
     async delete(id) {
-        return apiCall(`/derogations/${id}`, {
+        return apiCall(`/api/derogations/${id}`, {
             method: 'DELETE'
         });
     },
     
     async getByEleve(eleveId) {
-        return apiCall(`/derogations/eleve/${eleveId}`);
+        return apiCall(`/api/derogations/eleve/${eleveId}`);
     },
     
     async getByParent(parentId) {
-        return apiCall(`/derogations/parent/${parentId}`);
+        return apiCall(`/api/derogations/parent/${parentId}`);
     },
     
     async getByStatut(statut, page = 0, size = 20) {
-        return apiCall(`/derogations/statut/${statut}?page=${page}&size=${size}`);
+        return apiCall(`/api/derogations/statut/${statut}?page=${page}&size=${size}`);
     },
     
     async approuver(id, decidePar) {
-        return apiCall(`/derogations/${id}/approuver?decidePar=${encodeURIComponent(decidePar)}`, {
+        return apiCall(`/api/derogations/${id}/approuver?decidePar=${encodeURIComponent(decidePar)}`, {
             method: 'POST'
         });
     },
     
     async rejeter(id, decidePar, motifRejet) {
-        return apiCall(`/derogations/${id}/rejeter?decidePar=${encodeURIComponent(decidePar)}&motifRejet=${encodeURIComponent(motifRejet)}`, {
+        return apiCall(`/api/derogations/${id}/rejeter?decidePar=${encodeURIComponent(decidePar)}&motifRejet=${encodeURIComponent(motifRejet)}`, {
             method: 'POST'
         });
     },
     
     async generateNumero() {
-        return apiCall('/derogations/generate-numero');
+        return apiCall('/api/derogations/generate-numero');
     },
     
     async countParStatut() {
-        return apiCall('/derogations/count-par-statut');
+        return apiCall('/api/derogations/count-par-statut');
     }
 };
 
 // API de Gestion des Utilisateurs
 const UserManagementAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/users?page=${page}&size=${size}`);
+        return apiCall(`/api/users?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/users/${id}`);
+        return apiCall(`/api/users/${id}`);
     },
     
     async create(user) {
-        return apiCall('/users', {
+        return apiCall('/api/users', {
             method: 'POST',
             body: JSON.stringify(user)
         });
     },
     
     async update(id, user) {
-        return apiCall(`/users/${id}`, {
+        return apiCall(`/api/users/${id}`, {
             method: 'PUT',
             body: JSON.stringify(user)
         });
     },
     
     async delete(id) {
-        return apiCall(`/users/${id}`, {
+        return apiCall(`/api/users/${id}`, {
             method: 'DELETE'
         });
     },
     
     async activate(id) {
-        return apiCall(`/users/${id}/activate`, {
+        return apiCall(`/api/users/${id}/activate`, {
             method: 'PUT'
         });
     },
     
     async deactivate(id) {
-        return apiCall(`/users/${id}/deactivate`, {
+        return apiCall(`/api/users/${id}/deactivate`, {
             method: 'PUT'
         });
     },
     
     async changePassword(id, newPassword) {
-        return apiCall(`/users/${id}/change-password`, {
+        return apiCall(`/api/users/${id}/change-password`, {
             method: 'PUT',
             body: JSON.stringify({ newPassword })
         });
     },
     
     async changeRole(id, role) {
-        return apiCall(`/users/${id}/change-role`, {
+        return apiCall(`/api/users/${id}/change-role`, {
             method: 'PUT',
             body: JSON.stringify({ role })
         });
     },
     
     async search(query, page = 0, size = 10) {
-        return apiCall(`/users/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`);
+        return apiCall(`/api/users/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`);
     },
     
     async getByRole(role, page = 0, size = 10) {
-        return apiCall(`/users/by-role/${role}?page=${page}&size=${size}`);
+        return apiCall(`/api/users/by-role/${role}?page=${page}&size=${size}`);
     },
     
     async getStatistics() {
-        return apiCall('/users/statistics');
+        return apiCall('/api/users/statistics');
     }
 };
 
 // API des Classes
 const ClasseAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/classes?page=${page}&size=${size}`);
+        return apiCall(`/api/classes?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/classes/${id}`);
+        return apiCall(`/api/classes/${id}`);
     },
     
     async create(classe) {
-        return apiCall('/classes', {
+        return apiCall('/api/classes', {
             method: 'POST',
             body: JSON.stringify(classe)
         });
     },
     
     async update(id, classe) {
-        return apiCall(`/classes/${id}`, {
+        return apiCall(`/api/classes/${id}`, {
             method: 'PUT',
             body: JSON.stringify(classe)
         });
     },
     
     async delete(id) {
-        return apiCall(`/classes/${id}`, {
+        return apiCall(`/api/classes/${id}`, {
             method: 'DELETE'
         });
     },
     
     async search(query) {
-        return apiCall(`/classes/search?query=${encodeURIComponent(query)}`);
+        return apiCall(`/api/classes/search?query=${encodeURIComponent(query)}`);
     },
     
     async getEleves(id) {
-        return apiCall(`/classes/${id}/eleves`);
+        return apiCall(`/api/classes/${id}/eleves`);
     }
 };
 
 // API des Niveaux
 const NiveauAPI = {
     async getAll() {
-        return apiCall('/niveaux');
+        return apiCall('/api/niveaux');
     },
     
     async getById(id) {
-        return apiCall(`/niveaux/${id}`);
+        return apiCall(`/api/niveaux/${id}`);
     }
 };
 
@@ -469,19 +535,19 @@ const NiveauAPI = {
 const CommunicationAPI = {
     // Messages
     async getMessagesRecus(page = 0, size = 20) {
-        return apiCall(`/communication/messages/recus?page=${page}&size=${size}`);
+        return apiCall(`/api/communication/messages/recus?page=${page}&size=${size}`);
     },
     
     async getMessagesEnvoyes(page = 0, size = 20) {
-        return apiCall(`/communication/messages/envoyes?page=${page}&size=${size}`);
+        return apiCall(`/api/communication/messages/envoyes?page=${page}&size=${size}`);
     },
     
     async getMessagesNonLus(page = 0, size = 20) {
-        return apiCall(`/communication/messages/non-lus?page=${page}&size=${size}`);
+        return apiCall(`/api/communication/messages/non-lus?page=${page}&size=${size}`);
     },
     
     async getMessage(id) {
-        return apiCall(`/communication/messages/${id}`);
+        return apiCall(`/api/communication/messages/${id}`);
     },
     
     async envoyerMessage(messageData, files = null) {
@@ -490,7 +556,7 @@ const CommunicationAPI = {
         if (files) {
             files.forEach(file => formData.append('files', file));
         }
-        return apiCall('/communication/messages', {
+        return apiCall('/api/communication/messages', {
             method: 'POST',
             body: formData,
             headers: {} // Let browser set Content-Type for FormData
@@ -498,57 +564,57 @@ const CommunicationAPI = {
     },
     
     async marquerMessageCommeLu(id) {
-        return apiCall(`/communication/messages/${id}/lire`, { method: 'PUT' });
+        return apiCall(`/api/communication/messages/${id}/lire`, { method: 'PUT' });
     },
     
     async archiverMessage(id) {
-        return apiCall(`/communication/messages/${id}/archiver`, { method: 'PUT' });
+        return apiCall(`/api/communication/messages/${id}/archiver`, { method: 'PUT' });
     },
     
     async supprimerMessage(id) {
-        return apiCall(`/communication/messages/${id}`, { method: 'DELETE' });
+        return apiCall(`/api/communication/messages/${id}`, { method: 'DELETE' });
     },
     
     async countMessagesNonLus() {
-        return apiCall('/communication/messages/count-non-lus');
+        return apiCall('/api/communication/messages/count-non-lus');
     },
     
     // Notifications
     async getNotifications(page = 0, size = 20) {
-        return apiCall(`/communication/notifications?page=${page}&size=${size}`);
+        return apiCall(`/api/communication/notifications?page=${page}&size=${size}`);
     },
     
     async getNotificationsNonLues(page = 0, size = 20) {
-        return apiCall(`/communication/notifications/non-lues?page=${page}&size=${size}`);
+        return apiCall(`/api/communication/notifications/non-lues?page=${page}&size=${size}`);
     },
     
     async getNotification(id) {
-        return apiCall(`/communication/notifications/${id}`);
+        return apiCall(`/api/communication/notifications/${id}`);
     },
     
     async marquerNotificationCommeLue(id) {
-        return apiCall(`/communication/notifications/${id}/lire`, { method: 'PUT' });
+        return apiCall(`/api/communication/notifications/${id}/lire`, { method: 'PUT' });
     },
     
     async marquerToutesNotificationsLues() {
-        return apiCall('/communication/notifications/lire-toutes', { method: 'PUT' });
+        return apiCall('/api/communication/notifications/lire-toutes', { method: 'PUT' });
     },
     
     async countNotificationsNonLues() {
-        return apiCall('/communication/notifications/count-non-lues');
+        return apiCall('/api/communication/notifications/count-non-lues');
     },
     
     // Annonces
     async getAnnoncesActives(page = 0, size = 20) {
-        return apiCall(`/communication/annonces?page=${page}&size=${size}`);
+        return apiCall(`/api/communication/annonces?page=${page}&size=${size}`);
     },
     
     async getAnnoncesEpinglees(page = 0, size = 20) {
-        return apiCall(`/communication/annonces/epinglees?page=${page}&size=${size}`);
+        return apiCall(`/api/communication/annonces/epinglees?page=${page}&size=${size}`);
     },
     
     async getAnnonce(id) {
-        return apiCall(`/communication/annonces/${id}`);
+        return apiCall(`/api/communication/annonces/${id}`);
     },
     
     async creerAnnonce(annonceData, files = null) {
@@ -557,7 +623,7 @@ const CommunicationAPI = {
         if (files) {
             files.forEach(file => formData.append('files', file));
         }
-        return apiCall('/communication/annonces', {
+        return apiCall('/api/communication/annonces', {
             method: 'POST',
             body: formData,
             headers: {}
@@ -565,212 +631,181 @@ const CommunicationAPI = {
     },
     
     async modifierAnnonce(id, annonceData) {
-        return apiCall(`/communication/annonces/${id}`, {
+        return apiCall(`/api/communication/annonces/${id}`, {
             method: 'PUT',
             body: JSON.stringify(annonceData)
         });
     },
     
     async epinglerAnnonce(id) {
-        return apiCall(`/communication/annonces/${id}/epingler`, { method: 'PUT' });
+        return apiCall(`/api/communication/annonces/${id}/epingler`, { method: 'PUT' });
     },
     
     async supprimerAnnonce(id) {
-        return apiCall(`/communication/annonces/${id}`, { method: 'DELETE' });
+        return apiCall(`/api/communication/annonces/${id}`, { method: 'DELETE' });
     },
     
     async countAnnoncesActives() {
-        return apiCall('/communication/annonces/count');
+        return apiCall('/api/communication/annonces/count');
     },
     
     async searchAnnonces(recherche, page = 0, size = 20) {
-        return apiCall(`/communication/annonces/search?recherche=${encodeURIComponent(recherche)}&page=${page}&size=${size}`);
+        return apiCall(`/api/communication/annonces/search?recherche=${encodeURIComponent(recherche)}&page=${page}&size=${size}`);
     }
 };
 
 // API des Factures
 const FactureAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/factures?page=${page}&size=${size}`);
+        return apiCall(`/api/factures?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/factures/${id}`);
+        return apiCall(`/api/factures/${id}`);
     },
     
     async getByEleve(eleveId) {
-        return apiCall(`/factures/eleve/${eleveId}`);
+        return apiCall(`/api/factures/eleve/${eleveId}`);
     },
     
     async getImpayees() {
-        return apiCall('/factures/impayees');
+        return apiCall('/api/factures/impayees');
     }
 };
 
 // API des Années Scolaires
 const AnneeScolaireAPI = {
     async getAll() {
-        return apiCall('/annees-scolaires');
+        return apiCall('/api/annees-scolaires');
     },
     
     async getActive() {
-        return apiCall('/annees-scolaires/active');
+        return apiCall('/api/annees-scolaires/active');
     },
     
     async getById(id) {
-        return apiCall(`/annees-scolaires/${id}`);
+        return apiCall(`/api/annees-scolaires/${id}`);
     }
 };
 
 // API du Dashboard
 const DashboardAPI = {
     async getStatistiques() {
-        return apiCall('/dashboard/statistiques');
+        return apiCall('/api/dashboard/statistiques');
     },
     
     async getActivitesRecentes() {
-        return apiCall('/dashboard/activites-recentes');
-    }
-};
-
-// API des Parents
-const ParentAPI = {
-    async getAll(page = 0, size = 10) {
-        return apiCall(`/parents?page=${page}&size=${size}`);
-    },
-    
-    async getById(id) {
-        return apiCall(`/parents/${id}`);
-    },
-    
-    async create(parent) {
-        return apiCall('/parents', {
-            method: 'POST',
-            body: JSON.stringify(parent)
-        });
-    },
-    
-    async update(id, parent) {
-        return apiCall(`/parents/${id}`, {
-            method: 'PUT',
-            body: JSON.stringify(parent)
-        });
-    },
-    
-    async delete(id) {
-        return apiCall(`/parents/${id}`, {
-            method: 'DELETE'
-        });
+        return apiCall('/api/dashboard/activites-recentes');
     }
 };
 
 // API des Enseignants
 const EnseignantAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/enseignants?page=${page}&size=${size}`);
+        return apiCall(`/api/enseignants?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/enseignants/${id}`);
+        return apiCall(`/api/enseignants/${id}`);
     },
     
     async create(enseignant) {
-        return apiCall('/enseignants', {
+        return apiCall('/api/enseignants', {
             method: 'POST',
             body: JSON.stringify(enseignant)
         });
     },
     
     async update(id, enseignant) {
-        return apiCall(`/enseignants/${id}`, {
+        return apiCall(`/api/enseignants/${id}`, {
             method: 'PUT',
             body: JSON.stringify(enseignant)
         });
     },
     
     async delete(id) {
-        return apiCall(`/enseignants/${id}`, {
+        return apiCall(`/api/enseignants/${id}`, {
             method: 'DELETE'
         });
     },
     
     // Méthodes pour le dashboard enseignant
     async getStatistiques(enseignantId) {
-        return apiCall(`/enseignants/${enseignantId}/statistiques`);
+        return apiCall(`/api/enseignants/${enseignantId}/statistiques`);
     },
     
     async getClasses(enseignantId) {
-        return apiCall(`/enseignants/${enseignantId}/classes`);
+        return apiCall(`/api/enseignants/${enseignantId}/classes`);
     },
     
     async getPerformances(enseignantId) {
-        return apiCall(`/enseignants/${enseignantId}/performances`);
+        return apiCall(`/api/enseignants/${enseignantId}/performances`);
     },
     
     async getElevesDifficulte(enseignantId) {
-        return apiCall(`/enseignants/${enseignantId}/eleves-difficulte`);
+        return apiCall(`/api/enseignants/${enseignantId}/eleves-difficulte`);
     },
     
     async getProchainsCours(enseignantId) {
-        return apiCall(`/enseignants/${enseignantId}/prochains-cours`);
+        return apiCall(`/api/enseignants/${enseignantId}/prochains-cours`);
     }
 };
 
 // API des Bourses
 const BourseAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/bourses?page=${page}&size=${size}`);
+        return apiCall(`/api/bourses?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/bourses/${id}`);
+        return apiCall(`/api/bourses/${id}`);
     },
     
     async getByEleve(eleveId) {
-        return apiCall(`/bourses/eleve/${eleveId}`);
+        return apiCall(`/api/bourses/eleve/${eleveId}`);
     }
 };
 
 // API des Messages
 const MessageAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/messages?page=${page}&size=${size}`);
+        return apiCall(`/api/messages?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/messages/${id}`);
+        return apiCall(`/api/messages/${id}`);
     },
     
     async send(message) {
-        return apiCall('/messages', {
+        return apiCall('/api/messages', {
             method: 'POST',
             body: JSON.stringify(message)
         });
     },
     
     async getConversations() {
-        return apiCall('/messages/conversations');
+        return apiCall('/api/messages/conversations');
     }
 };
 
 // API des Notifications  
 const NotificationAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/notifications?page=${page}&size=${size}`);
+        return apiCall(`/api/notifications?page=${page}&size=${size}`);
     },
     
     async getUnread() {
-        return apiCall('/notifications/unread');
+        return apiCall('/api/notifications/unread');
     },
     
     async markAsRead(id) {
-        return apiCall(`/notifications/${id}/read`, {
+        return apiCall(`/api/notifications/${id}/read`, {
             method: 'PUT'
         });
     },
     
     async markAllAsRead() {
-        return apiCall('/notifications/mark-all-read', {
+        return apiCall('/api/notifications/mark-all-read', {
             method: 'PUT'
         });
     }
@@ -779,15 +814,15 @@ const NotificationAPI = {
 // API des Annonces
 const AnnonceAPI = {
     async getAll(page = 0, size = 10) {
-        return apiCall(`/annonces?page=${page}&size=${size}`);
+        return apiCall(`/api/annonces?page=${page}&size=${size}`);
     },
     
     async getById(id) {
-        return apiCall(`/annonces/${id}`);
+        return apiCall(`/api/annonces/${id}`);
     },
     
     async create(annonce) {
-        return apiCall('/annonces', {
+        return apiCall('/api/annonces', {
             method: 'POST',
             body: JSON.stringify(annonce)
         });

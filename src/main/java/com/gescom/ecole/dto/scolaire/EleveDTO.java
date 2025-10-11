@@ -54,8 +54,8 @@ public class EleveDTO {
     private LocalDate dateInscription;
     private String ecoleProvenance;
     private String quartier;
-    private Boolean boursier;
-    private BigDecimal pourcentageBourse;
+    private Boolean boursier = false;  // Valeur par défaut
+    private BigDecimal pourcentageBourse = BigDecimal.ZERO;  // Valeur par défaut
     
     // Relations
     @NotNull(message = "La classe est obligatoire")

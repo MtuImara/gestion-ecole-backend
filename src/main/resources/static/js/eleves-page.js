@@ -134,6 +134,13 @@ async function loadEleves() {
             const response = await window.EleveAPI.getAll();
             elevesData = response.content || response;
             console.log('[Eleves Page] Données chargées depuis l\'API:', elevesData.length);
+            
+            // Debug: Afficher la structure du premier élève
+            if (elevesData.length > 0) {
+                console.log('Structure du premier élève:', elevesData[0]);
+                console.log('Statut:', elevesData[0].statut, 'Type:', typeof elevesData[0].statut);
+                console.log('Genre:', elevesData[0].genre, 'Type:', typeof elevesData[0].genre);
+            }
         } else if (window.API) {
             elevesData = await window.API.getEleves();
             console.log('[Eleves Page] Données chargées depuis l\'API (APIIntegration):', elevesData.length);
@@ -244,12 +251,12 @@ function displayEleves() {
                                 padding: 4px 8px;
                                 border-radius: 12px;
                                 font-size: 12px;
-                                background: ${eleve.statut === 'ACTIF' ? '#d4edda' : '#f8d7da'};
-                                color: ${eleve.statut === 'ACTIF' ? '#155724' : '#721c24'};
-                            ">${eleve.statut}</span>
+                                background: ${getStatutValue(eleve.statut) === 'ACTIF' ? '#d4edda' : '#f8d7da'};
+                                color: ${getStatutValue(eleve.statut) === 'ACTIF' ? '#155724' : '#721c24'};
+                            ">${getStatutValue(eleve.statut)}</span>
                         </td>
                         <td style="padding: 12px; text-align: center;">
-                            <button onclick="viewEleve(${eleve.id})" title="Voir" style="
+                            <button onclick="viewEleve(${eleve.id})" title="Voir détails" style="
                                 padding: 6px 10px;
                                 margin: 0 2px;
                                 background: #17a2b8;
@@ -257,7 +264,8 @@ function displayEleves() {
                                 border: none;
                                 border-radius: 3px;
                                 cursor: pointer;
-                            ">👁️</button>
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.background='#138496'" onmouseout="this.style.background='#17a2b8'">👁️</button>
                             <button onclick="editEleve(${eleve.id})" title="Modifier" style="
                                 padding: 6px 10px;
                                 margin: 0 2px;
@@ -646,6 +654,20 @@ async function submitForm(event) {
     }
 }
 
+// Fonction pour voir les détails d'un élève
+function viewEleve(id) {
+    window.location.href = `/eleve-detail?id=${id}`;
+}
+
+// Fonction helper pour obtenir la valeur du statut (objet ou string)
+function getStatutValue(statut) {
+    if (!statut) return 'ACTIF';
+    if (typeof statut === 'object') {
+        return statut.key || statut.value || 'ACTIF';
+    }
+    return statut;
+}
+
 // Fonction helper pour convertir le genre M/F en MASCULIN/FEMININ
 function convertGenre(genre) {
     const genreMapping = {
@@ -669,13 +691,18 @@ function convertGenreToDisplay(genre) {
 
 // Fonction pour obtenir l'icône du genre
 function getGenreIcon(genre) {
-    if (typeof genre === 'object' && genre.key) {
-        return genre.key === 'MASCULIN' ? '👦' : '👧';
+    // Gérer le genre qu'il soit un objet ou une chaîne
+    let genreValue = genre;
+    if (typeof genre === 'object' && genre !== null) {
+        genreValue = genre.key || genre.value || 'MASCULIN';
     }
-    if (genre === 'MASCULIN' || genre === 'M') {
+    
+    if (genreValue === 'MASCULIN' || genreValue === 'M') {
         return '👦';
+    } else if (genreValue === 'FEMININ' || genreValue === 'F') {
+        return '👧';
     }
-    return '👧';
+    return '👦'; // Par défaut
 }
 
 // Fonction pour obtenir le nom de la classe

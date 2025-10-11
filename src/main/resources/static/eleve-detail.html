@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche Élève - Gestion École</title>
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js pour les graphiques -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- CSS personnalisé -->
+    <link rel="stylesheet" href="/css/eleve-detail.css">
+</head>
+<body>
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="/eleves" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Retour à la liste
+            </a>
+            <div class="action-buttons">
+                <button class="action-btn edit-btn" onclick="editStudent()">
+                    <i class="fas fa-edit"></i>
+                    Modifier
+                </button>
+                <button class="action-btn print-btn" onclick="exportToPDF()">
+                    <i class="fas fa-file-pdf"></i>
+                    Export PDF
+                </button>
+                <button class="action-btn print-btn" onclick="printStudentCard()">
+                    <i class="fas fa-print"></i>
+                    Imprimer
+                </button>
+                <button class="action-btn delete-btn" onclick="deleteStudent()">
+                    <i class="fas fa-trash"></i>
+                    Supprimer
+                </button>
+            </div>
+        </div>
+
+        <!-- Alert container -->
+        <div id="alertContainer"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-image-container">
+                    <img id="studentPhoto" src="/images/default-avatar.png" alt="Photo élève" class="profile-image" style="cursor: pointer;" onclick="uploadStudentPhoto()" title="Cliquez pour changer la photo">
+                    <span class="status-badge" id="statusBadge">Actif</span>
+                    <button onclick="uploadStudentPhoto()" style="
+                        position: absolute;
+                        bottom: 5px;
+                        right: 85px;
+                        background: #667eea;
+                        color: white;
+                        border: none;
+                        border-radius: 50%;
+                        width: 35px;
+                        height: 35px;
+                        cursor: pointer;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    " title="Changer la photo">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+                <h2 class="student-name" id="studentName">Chargement...</h2>
+                <p class="student-matricule" id="studentMatricule">Matricule: ...</p>
+                
+                <div class="quick-info">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-birthday-cake"></i>
+                        </div>
+                        <div class="info-text">
+                            <div class="info-label">Date de naissance</div>
+                            <div class="info-value" id="birthDate">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="info-text">
+                            <div class="info-label">Classe</div>
+                            <div class="info-value" id="studentClass">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="info-text">
+                            <div class="info-label">Contact urgence</div>
+                            <div class="info-value" id="emergencyContact">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="info-text">
+                            <div class="info-label">Date d'inscription</div>
+                            <div class="info-value" id="enrollmentDate">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs Content -->
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <button class="tab-button active" onclick="switchTab('informations')">
+                        <i class="fas fa-info-circle"></i> Informations
+                    </button>
+                    <button class="tab-button" onclick="switchTab('academic')">
+                        <i class="fas fa-book"></i> Académique
+                    </button>
+                    <button class="tab-button" onclick="switchTab('financial')">
+                        <i class="fas fa-dollar-sign"></i> Financier
+                    </button>
+                    <button class="tab-button" onclick="switchTab('medical')">
+                        <i class="fas fa-heartbeat"></i> Médical
+                    </button>
+                    <button class="tab-button" onclick="switchTab('parents')">
+                        <i class="fas fa-users"></i> Parents
+                    </button>
+                    <button class="tab-button" onclick="switchTab('history')">
+                        <i class="fas fa-history"></i> Historique
+                    </button>
+                </div>
+
+                <!-- Tab: Informations -->
+                <div id="informations" class="tab-content active">
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-user"></i>
+                            Informations personnelles
+                        </h3>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="info-card-label">Nom complet</div>
+                                <div class="info-card-value" id="fullName">-</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">Genre</div>
+                                <div class="info-card-value" id="gender">-</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">Âge</div>
+                                <div class="info-card-value" id="age">-</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">Nationalité</div>
+                                <div class="info-card-value" id="nationality">-</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">Lieu de naissance</div>
+                                <div class="info-card-value" id="birthPlace">-</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">Adresse</div>
+                                <div class="info-card-value" id="address">-</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">Quartier</div>
+                                <div class="info-card-value" id="quartier">-</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">École de provenance</div>
+                                <div class="info-card-value" id="previousSchool">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Académique -->
+                <div id="academic" class="tab-content">
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-chart-line"></i>
+                            Performance académique
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-trophy"></i>
+                            Dernières notes
+                        </h3>
+                        <table class="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>Matière</th>
+                                    <th>Note</th>
+                                    <th>Coefficient</th>
+                                    <th>Date</th>
+                                    <th>Appréciation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gradesTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #999;">Aucune note disponible</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab: Financier -->
+                <div id="financial" class="tab-content">
+                    <div class="financial-cards">
+                        <div class="financial-card">
+                            <div class="financial-card-title">Total à payer</div>
+                            <div class="financial-card-value" id="totalToPay">0 FCFA</div>
+                            <div class="financial-card-subtitle">Année scolaire en cours</div>
+                        </div>
+                        <div class="financial-card">
+                            <div class="financial-card-title">Montant payé</div>
+                            <div class="financial-card-value" id="totalPaid">0 FCFA</div>
+                            <div class="financial-card-subtitle">Paiements effectués</div>
+                        </div>
+                        <div class="financial-card">
+                            <div class="financial-card-title">Solde restant</div>
+                            <div class="financial-card-value" id="remainingBalance">0 FCFA</div>
+                            <div class="financial-card-subtitle">À régler</div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-receipt"></i>
+                            Historique des paiements
+                        </h3>
+                        <table class="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Montant</th>
+                                    <th>Type</th>
+                                    <th>Mode</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #999;">Aucun paiement enregistré</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-award"></i>
+                            Informations de bourse
+                        </h3>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="info-card-label">Statut boursier</div>
+                                <div class="info-card-value" id="scholarshipStatus">Non boursier</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">Pourcentage de bourse</div>
+                                <div class="info-card-value" id="scholarshipPercentage">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Médical -->
+                <div id="medical" class="tab-content">
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-notes-medical"></i>
+                            Informations médicales
+                        </h3>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="info-card-label">Groupe sanguin</div>
+                                <div class="info-card-value" id="bloodType">-</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">Allergies</div>
+                                <div class="info-card-value" id="allergies">Aucune allergie connue</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-label">Maladies chroniques</div>
+                                <div class="info-card-value" id="chronicDiseases">Aucune</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Parents -->
+                <div id="parents" class="tab-content">
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-user-friends"></i>
+                            Parents / Tuteurs
+                        </h3>
+                        <div class="parent-cards" id="parentCards">
+                            <div style="grid-column: 1/-1; text-align: center; color: #999;">
+                                Aucun parent enregistré
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Historique -->
+                <div id="history" class="tab-content">
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-clock"></i>
+                            Historique et activités
+                        </h3>
+                        <div class="timeline" id="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">Aujourd'hui</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Inscription</div>
+                                    <div class="timeline-description">L'élève a été inscrit dans l'établissement</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/js/api.js"></script>
+    <script src="/js/eleve-detail.js"></script>
+    <script src="/js/eleve-detail-enhanced.js"></script>
+    
+    <!-- Script pour les fonctions de messagerie -->
+    <script>
+        // Fonction pour ouvrir la messagerie (si pas déjà définie dans eleve-detail-enhanced.js)
+        if (typeof openMessaging === 'undefined') {
+            function openMessaging(parentId) {
+                // Fonction définie dans eleve-detail-enhanced.js
+                console.log('Fonction de messagerie chargée depuis eleve-detail-enhanced.js');
+            }
+        }
+        
+        // Fonction pour uploader une photo (si pas déjà définie)
+        if (typeof uploadStudentPhoto === 'undefined') {
+            function uploadStudentPhoto() {
+                // Fonction définie dans eleve-detail-enhanced.js
+                console.log('Fonction d\'upload photo chargée depuis eleve-detail-enhanced.js');
+            }
+        }
+        
+        // Fonction pour exporter en PDF
+        if (typeof exportToPDF === 'undefined') {
+            function exportToPDF() {
+                // Fonction définie dans eleve-detail-enhanced.js
+                console.log('Fonction d\'export PDF chargée depuis eleve-detail-enhanced.js');
+            }
+        }
+    </script>
+</body>
+</html>

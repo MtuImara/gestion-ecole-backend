@@ -350,10 +350,14 @@ public class PaiementServiceImpl implements PaiementService {
                 // Envoyer email au parent si email disponible
                 if (paiement.getParent().getEmail() != null && !paiement.getParent().getEmail().isEmpty()) {
                     try {
-                        emailService.envoyerRecuParEmail(paiement.getParent().getEmail(), paiement.getId());
+                        // Générer le PDF du reçu d'abord
+                        byte[] recuPdf = genererRecu(paiement.getId());
+                        // Puis l'envoyer par email
+                        emailService.sendRecuEmail(paiement.getParent().getEmail(), recuPdf, paiement.getId());
                         log.info("Reçu envoyé par email au parent: {}", paiement.getParent().getEmail());
                     } catch (Exception emailEx) {
                         log.error("Erreur envoi email reçu au parent", emailEx);
+                        // Ne pas faire échouer la validation si l'email échoue
                     }
                 }
             } catch (Exception e) {
